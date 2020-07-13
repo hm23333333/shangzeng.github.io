@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="ShangZeng">
+
+
+
+
+
+<title>hacker101_CTF【一】 | ShangZeng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">ShangZeng&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">ShangZeng&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">hacker101_CTF【一】</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">ShangZeng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">January 18, 2020&nbsp;&nbsp;19:08:15</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CTF/">CTF</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p> 建议大家先刷在看WP，简单写下我的思路，感觉很多知识点和技巧还是挺贴近实战的。</p>
+<p> 最后感谢<strong>Root</strong>，****等师傅的指点和帮助。</p>
+<h2 id="about-hacker101-CTF"><a href="#about-hacker101-CTF" class="headerlink" title="about hacker101 CTF"></a>about hacker101 CTF</h2><p> <a href="https://ctf.hacker101.com/" target="_blank" rel="noopener">hacker101 CTF</a>是国外漏洞提交平台hacker one 的一个CTF靶场，累计一定积分后会获得私人邀请资格</p>
+<h3 id="A-little-something-to-get-you-started"><a href="#A-little-something-to-get-you-started" class="headerlink" title="A little something to get you started"></a>A little something to get you started</h3><p> 查看源代码，发现背景图片没有，访问查看（在日常渗透的的一些静态文件也会存储在服务器中，有可能存在SSRF等问题）, 查看图片，找到flag.</p>
+<h3 id="Micro-CMS-v1"><a href="#Micro-CMS-v1" class="headerlink" title="Micro-CMS v1"></a>Micro-CMS v1</h3><p> 主要考察简单的XSS和注入，一共四个flag</p>
+<h4 id="flag-1"><a href="#flag-1" class="headerlink" title="flag_1"></a>flag_1</h4><p> 进入Testing ,选择编辑,尝试注入</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-3.png" alt="image"></p>
+<p> 这时候会发现script标签被过滤了，紧接着我们尝试在标题注入，这时候会发现标题的标签被转译了。然而返回主页的时候会发现，转译的标题在首页反而成功执行了。</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-5.png" alt="image"></p>
+<p> 这种情况在一些复杂场景的确出现过，比如A网站出现的数据处理的很好，但是在B网站引用的时候出现了问题（比如19年的百度搜索手机端引用视频连接标题导致XSS的事件），感觉有点像二次注入。</p>
+<h4 id="flag-2"><a href="#flag-2" class="headerlink" title="flag_2"></a>flag_2</h4><p>  点击第二个Markdown Test发现一个坏掉的图片连接,提示我们测试一些markdown方法(其实这里我们使用常规XSS也能进行绕过，但是这里提示了markdown说明正解应该是使用markdown来绕过的)，这里参考了下面的文章，成功构造获取flag</p>
+<p>  <a href="https://xz.aliyun.com/t/4281" target="_blank" rel="noopener">Markdown中的XSS</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[Click Me](&quot;&quot; onerror &#x3D; &quot;xss&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>  保存后，在源代码中获取flag</p>
+<p>  <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-7.png" alt="image"></p>
+<h4 id="flag-3"><a href="#flag-3" class="headerlink" title="flag_3"></a>flag_3</h4><p>编辑页面的URL存在规律性，目前看到这种第一反应是加单引号，第二反应就是遍历下看看能不能越权。</p>
+<p>遍历/page/edit/x  发现flag</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-8.png" alt="image"></p>
+<h4 id="flag-4"><a href="#flag-4" class="headerlink" title="flag_4"></a>flag_4</h4><p>在尝试/page/edit/x和/page/x的注入测试中找到flag，也是考察常规流程和思路了。</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-9.png" alt="image"></p>
+<h3 id="Micro-CMS-v2"><a href="#Micro-CMS-v2" class="headerlink" title="Micro-CMS v2"></a>Micro-CMS v2</h3><p>主要考察注入知识点</p>
+<h4 id="flag-1-1"><a href="#flag-1-1" class="headerlink" title="flag_1"></a>flag_1</h4><p>在上面的基础上加上了登陆功能，首先加单引号发现报错，python写的网站，sql语句已经出来了。</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-10.png" alt="image"></p>
+<p>尝试构造语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT password FROM admins WHERE username&#x3D;admin&#39; or &#39;&#39;&#x3D;&#39;</span><br></pre></td></tr></table></figure>
+<p>但是显示“Invalid password”“无效的密码”，因此密码也需要进行构造。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SELECT password FROM admins WHERE username&#x3D;admin&#39; union select &#39;123&#39; as password -- </span><br><span class="line"></span><br><span class="line">#这样的话，密码就设置成为了123   </span><br><span class="line">#union select 联合查询  as 赋值</span><br><span class="line"></span><br><span class="line">a&#39; union select 1#</span><br><span class="line"></span><br><span class="line">#或者直接将后面全部注释</span><br></pre></td></tr></table></figure>
+<p>构造好后成功登陆，然后进入编辑页面获取flag</p>
+<h4 id="flag-2-1"><a href="#flag-2-1" class="headerlink" title="flag_2"></a>flag_2</h4><p>接着测试页面并没有什么发现，于是抓包分析看看是不是请求数据存在问题的时候发现虽然有创建新页面的选项，但是服务器并不会响应，最后看一篇国外文章，是利用编辑页面创建新页面，再删除cookie进行创建获取的flag</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-12.png" alt="image"></p>
+<h4 id="flag-3-1"><a href="#flag-3-1" class="headerlink" title="flag_3"></a>flag_3</h4><p>这里也是看解析会的，是需要登陆数据库中的账号密码来获取，可以手工也可以使用工具跑，登陆账号密码后获取flag,可以从数据库找flag或者账号密码登陆都能获得flag</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-15.png" alt="image"></p>
+<h3 id="Web-Crypto"><a href="#Web-Crypto" class="headerlink" title="Web, Crypto"></a>Web, Crypto</h3><p>看题目是加密和web结合的考察.</p>
+<h4 id="flag-1-2"><a href="#flag-1-2" class="headerlink" title="flag_1"></a>flag_1</h4><p>进入后是文章发布页面，标题内容随便写，生成URL如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;34.94.3.143&#x2F;4f8cc4a561&#x2F;?post&#x3D;3dkqDxqGu3FMNhmBSkyGpwYxpQfSE0Am9c5DsDlI1StgMnBkNPrbjAJqcs0ZRzyfUg8V2OqUVC0WLlwIOS8y9euwWwkQMTQwU01UZpKGgkJSBEUo1SmBwnE!D5rhg7j5uNQw3it5!RIgX9jub325UMEuUtudtfL3GRcaJpU33m8lhjLwd6PUmKxLvh3GWPN5uRW74UfgnwIHOF9bNtv-bg~~</span><br></pre></td></tr></table></figure>
+
+<p>猜测文章内容是post参数传输的，尝试修改看看会报什么错，获取flag</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-16.png" alt="image"></p>
+<h4 id="flag-2-2"><a href="#flag-2-2" class="headerlink" title="flag_2"></a>flag_2</h4><p>显然内容是加密传输的，fuzz报错看看能不能得到什么有用信息,总结如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python2编写</span><br><span class="line">会替换一些字符</span><br><span class="line">使用aes算发为cbc,密钥为staticKey</span><br><span class="line">使用base64加密</span><br></pre></td></tr></table></figure>
+
+<p>问了搞密码学方向的师傅，知道考察点是<a href="https://www.freebuf.com/articles/database/151167.html" target="_blank" rel="noopener">Padding oracle attack</a>，使用kali中的<a href="https://www.freebuf.com/articles/web/84498.html" target="_blank" rel="noopener">padbuster</a>方法进行解密。</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/24.png" alt="image"></p>
+<h4 id="flag-3-and-flag-4"><a href="#flag-3-and-flag-4" class="headerlink" title="flag_3 and flag_4"></a>flag_3 and flag_4</h4><p>思路是存在sql注入，使用破解的加密算法写加密注入语句，获取flag。具体还在搞。</p>
+<h3 id="Photo-Gallery"><a href="#Photo-Gallery" class="headerlink" title="Photo Gallery"></a>Photo Gallery</h3><p>首页三张图片</p>
+<h4 id="flag-1-3"><a href="#flag-1-3" class="headerlink" title="flag_1"></a>flag_1</h4><p>查看三张图片内容，第三章访问错误，测试参数id 是否存在注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;34.94.3.143&#x2F;5b39cb10f1&#x2F;fetch?id&#x3D;1000-998</span><br></pre></td></tr></table></figure>
+<p>sqlmap梭哈</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http:&#x2F;&#x2F;34.94.3.143&#x2F;5b39cb10f1&#x2F;fetch\?id\&#x3D;1 -D level5 -T photos -C filename --dump</span><br></pre></td></tr></table></figure>
+
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-17.png" alt="image"></p>
+<h4 id="flag-2-3"><a href="#flag-2-3" class="headerlink" title="flag_2"></a>flag_2</h4><p>第三张图片不能看，但是ID参数存在3，证明大概率存在第三张图片,然后在这卡了半天（思路错误）。</p>
+<p>最后找文章&amp;&amp;请教大佬，发现注入原来还能这么玩,读取数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;xxxx&#x2F;xxx&#x2F;fetch?id&#x3D;4 union select &#39;files&#x2F;adorable.jpg&#39; --</span><br></pre></td></tr></table></figure>
+<p>根据图片的读取方式和之前测试index等路径后，初步觉得是python，go之类的语言编写的小demo，测试main.py 出了结果。</p>
+<p>找到源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask, abort, redirect, request, Response</span><br><span class="line">import base64, json, MySQLdb, os, re, subprocess</span><br><span class="line"></span><br><span class="line">app &#x3D; Flask(__name__)</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">@app.route(&#39;&#x2F;fetch&#39;)</span><br><span class="line">def fetch():</span><br><span class="line">	cur &#x3D; getDb().cursor()</span><br><span class="line">	if cur.execute(&#39;SELECT filename FROM photos WHERE id&#x3D;%s&#39; % request.args[&#39;id&#39;]) &#x3D;&#x3D; 0:</span><br><span class="line">		abort(404)</span><br><span class="line"></span><br><span class="line">	# It&#39;s dangerous to go alone, take this:</span><br><span class="line">	# ^FLAG^7edbfc67bef7b1b9c0f68ccf7baa75e3a5a53673f147ef3462ccc1da128e2a7f$FLAG$</span><br><span class="line"></span><br><span class="line">	return file(&#39;.&#x2F;%s&#39; % cur.fetchone()[0].replace(&#39;..&#39;, &#39;&#39;), &#39;rb&#39;).read()</span><br><span class="line"></span><br><span class="line">if __name__ &#x3D;&#x3D; &quot;__main__&quot;:</span><br><span class="line">	app.run(host&#x3D;&#39;0.0.0.0&#39;, port&#x3D;80)</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="flag-3-2"><a href="#flag-3-2" class="headerlink" title="flag_3"></a>flag_3</h4><p>代码审计main.py 从而获取flag,已经触及我知识盲区了。<br><a href="https://www.anquanke.com/post/id/180395" target="_blank" rel="noopener">没最出来，具体看大佬操作</a></p>
+<h3 id="Cody’s-First-Blog"><a href="#Cody’s-First-Blog" class="headerlink" title="Cody’s First Blog"></a>Cody’s First Blog</h3><p>看首页了解到考察点PHP+文件包含</p>
+<h4 id="flag-1-4"><a href="#flag-1-4" class="headerlink" title="flag_1"></a>flag_1</h4><p>查看源代码，发现注释了登陆界面（有时候看看注释的js之类的经常能找到一些接口）访问，发现登陆和留言，留言提交后需要审核，登陆尝试注入,爆破弱口令爆破都没啥反应，尝试fuzz路径，发现报错了。文件包含实锤了。</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-18.png" alt="image"></p>
+<p>尝试远程包含，伪协议等操作都失效了，然后看提示说下关于输入框，于是在首页输入框一顿乱试，最后发现输入PHP代码会返回flag（这说明输入文件是静态存储，可以被文件包含,可能是本地包含，一个思路）</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-20.png" alt="image"></p>
+<h4 id="flag-2-4"><a href="#flag-2-4" class="headerlink" title="flag_2"></a>flag_2</h4><p>既然是静态存储那么一定有地方存储了（本地文件包含总的有文件对吧），于是再找字典搞搞试试。</p>
+<p><a href="https://github.com/TheKingOfDuck/fuzzDicts" target="_blank" rel="noopener">米斯特微信公众号看见的一个字典</a></p>
+<p>找到PHP文件字典，写脚本去掉.php,在请求书发送特殊字符（用于定位包含文件），写脚本上VPS跑。最后跑出来是admin.inc</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-21.png" alt="image"></p>
+<h4 id="flag-3-3"><a href="#flag-3-3" class="headerlink" title="flag_3"></a>flag_3</h4><p>应该考察的越权不是fuzz，但是也跑出来了，，<br>这个应该是管理员审核前台发来的评论，点击允许果然发送到首页去了。</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-22.png" alt="image"></p>
+<p>那么提示已经很明显了，第一个输入PHP会返回flag，那么管理员批准会执行吗？尝试包含admin,inc报错，再尝试index包含</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-23.png" alt="image"></p>
+<p>不会执行但是写在网页中了，尝试包含,成功了</p>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-2.png" alt="image"></p>
+<p>但是之后尝试写入就是一直失败状态，看了一些wp了解到是存在限制，只能读取一条不能交互，这样只好吧源码读取再审计。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php echo file_get_contents(&#39;index.php&#39;);?&gt;</span><br></pre></td></tr></table></figure>
+<p> <img src="http://127.0.0.1:4000/2020/01/18/hacker101-CTF/image-4.png" alt="image"></p>
+<h3 id="Postbook"><a href="#Postbook" class="headerlink" title="Postbook"></a>Postbook</h3><p>考察各种功能的越权漏洞，原理都是一样的就不都写了。</p>
+<h4 id="flag-1-5"><a href="#flag-1-5" class="headerlink" title="flag_1"></a>flag_1</h4><p>发现注册账号网页，注册账号登陆，有写留言的功能，编写抓包，修改参数ID，获得flag</p>
+<h4 id="flag-2-5"><a href="#flag-2-5" class="headerlink" title="flag_2"></a>flag_2</h4><p>编辑修改他人信息（平行越权）保存修改他人的信息获取flag</p>
+<h4 id="flag-3-4"><a href="#flag-3-4" class="headerlink" title="flag_3"></a>flag_3</h4><p>尝试删除公能，发现删除ID是md5加密，替换获取flag</p>
+<h4 id="flag-4-1"><a href="#flag-4-1" class="headerlink" title="flag_4"></a>flag_4</h4><p>发现修改密码界面，抓包尝试越权，发现cookie设置就是ID的md5   值，修改成1查看到管理员密码，登陆管理员账号获取flag</p>
+<h4 id="flag-5"><a href="#flag-5" class="headerlink" title="flag_5"></a>flag_5</h4><p>既然首页有flag，那么伪造cookie看看能不能搞到别的，测试了2发现也存在<br>估计都是差不多类型的，flag太多老找重，不着了不找了，反正知道怎么搞了。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>ShangZeng</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://www.shangzeng.club/2020/01/18/hacker101-CTF/">https://www.shangzeng.club/2020/01/18/hacker101-CTF/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2020 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY<strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CTF/"># CTF</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/07/13/%E9%92%93%E9%B1%BC-BADUSB%E6%B5%8B%E8%AF%95%E9%83%A8%E7%BD%B2/">“钓鱼邮件/网站+BADUSB测试部署”</a>
+            
+            
+            <a class="next" rel="next" href="/2020/01/16/RGCMS%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">RGCMS代码审计</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© ShangZeng | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

