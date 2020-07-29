@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="ShangZeng">
+
+
+
+
+
+<title>基础扫描器编写-NmapScan | ShangZeng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">ShangZeng&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">ShangZeng&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">基础扫描器编写-NmapScan</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">ShangZeng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 16, 2020&nbsp;&nbsp;18:01:19</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Golang/">Golang</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>尝试写一些能用的东西。</p>
+<ol>
+<li>尝试过MASSCAN + NMAP + 漏洞检测的模式，MASSCAN 漏报概率有点高就放弃了。</li>
+<li>做详细报告不合适，但是可以用来做大致，快速的梳理</li>
+</ol>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>NMAP【自定义/默认扫描】 -&gt;  资产报告【生成表格】-&gt; 漏洞扫描【常见漏洞扫描】 -&gt; 整理【生成最终表格】</p>
+<h3 id="编写过程"><a href="#编写过程" class="headerlink" title="编写过程"></a>编写过程</h3><h4 id="文件读取-配置"><a href="#文件读取-配置" class="headerlink" title="文件读取/配置"></a>文件读取/配置</h4><p>使用config.json进行文件配置</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> configuration <span class="keyword">struct</span> &#123;</span><br><span class="line">    Email   	<span class="keyword">string</span></span><br><span class="line">    Key     	<span class="keyword">string</span></span><br><span class="line">    Attribute   <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(banner)</span><br><span class="line">	<span class="comment">// 加载配置文件内容</span></span><br><span class="line">	file, err := os.Open(<span class="string">"config.json"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"配置文件读取错误 ！"</span>)</span><br><span class="line">		os.Exit(<span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line">	decoder := json.NewDecoder(file)</span><br><span class="line">	conf := configuration&#123;&#125;</span><br><span class="line">	err1 := decoder.Decode(&amp;conf)</span><br><span class="line">	<span class="keyword">if</span> err1 != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"编码错误 ！请检查json文件格式 ！"</span>)</span><br><span class="line">		os.Exit(<span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	email = conf.Email</span><br><span class="line">	key   = conf.Key</span><br><span class="line">	attribute = conf.Attribute</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>读取要进行扫描的数据 iplist.txt</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadLines</span><span class="params">(path <span class="keyword">string</span>)</span> <span class="params">([]<span class="keyword">string</span>, <span class="keyword">int</span>, error)</span></span> &#123;</span><br><span class="line">  file, err := os.Open(path)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>,<span class="number">0</span>, err</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> lines []<span class="keyword">string</span></span><br><span class="line">  linecount :=<span class="number">0</span></span><br><span class="line">  scanner := bufio.NewScanner(file)</span><br><span class="line">  <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">    lines = <span class="built_in">append</span>(lines, scanner.Text())</span><br><span class="line">    linecount++</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> lines,linecount,scanner.Err()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="调用NMAP"><a href="#调用NMAP" class="headerlink" title="调用NMAP"></a>调用NMAP</h4><p>使用<a href="https://github.com/Ullaakut/nmap" target="_blank" rel="noopener">nmap</a>来命令行调用nmap，</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(), <span class="number">5</span>*time.Minute)</span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line">	<span class="comment">// Equivalent to `/usr/local/bin/nmap -p 80,443,843 google.com facebook.com youtube.com`,</span></span><br><span class="line">	<span class="comment">// with a 5 minute timeout.</span></span><br><span class="line">	scanner, err := nmap.NewScanner(</span><br><span class="line">		nmap.WithTargets(<span class="string">"121.36.140.230"</span>),</span><br><span class="line">		nmap.WithPorts(<span class="string">"1-100"</span>),</span><br><span class="line">		nmap.WithContext(ctx),</span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"unable to create nmap scanner: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	result, _, err := scanner.Run()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"unable to run nmap scan: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Use the results to print an example output</span></span><br><span class="line">	<span class="keyword">for</span> _, host := <span class="keyword">range</span> result.Hosts &#123;</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(host.Ports) == <span class="number">0</span> || <span class="built_in">len</span>(host.Addresses) == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Printf(<span class="string">"Host %q:\n"</span>, host.Addresses[<span class="number">0</span>])</span><br><span class="line">		<span class="keyword">for</span> _, port := <span class="keyword">range</span> host.Ports &#123;</span><br><span class="line">			fmt.Printf(<span class="string">"\tPort %d/%s %s %s\n"</span>, port.ID, port.Protocol, port.State, port.Service.Name)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">"Nmap done: %d hosts up scanned in %.2f seconds\n"</span>, <span class="built_in">len</span>(result.Hosts), result.Stats.Finished.Elapsed)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>决定要使用的常用命令参数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -Pn -p 1433,445,135,5985,3389,22,1521,3306,6379,5432,389,25,110,143,443,5900,21,873,27017,23,3690,1099,5984,5632,80-100,7000-10000,13389,13306,11433,18080 -n --open --min-hostgroup 1024 --min-parallelism 1024 --host-timeout 30 -T4 -v</span><br></pre></td></tr></table></figure>
+
+<p>参数解释：</p>
+<ol>
+<li>-sS : Nmap默认使用TCP方式扫描，需要完成完整的三次握手，很费时，所以这里可以采用-sS让Nmap使用SYN方式扫描。</li>
+<li>-Pn : 绕过防Ping（准确的说是不进行主机Ping发现）</li>
+<li>-p : 指定扫描端口</li>
+<li>-n : 不进行DNS解析（反向解析IP地址到域名）</li>
+<li>–open : 只输出检测状态为open的端口，即开放的端口（输出结果的优化）</li>
+<li>–min-hostgroup 1024 : 调整并行扫描组的大小</li>
+<li>–min-parallelism 1024 : 调整探测报文的并行度</li>
+<li>–host-timeout 30 : 检测超时的跳过（单位是秒  一般我们设置为30毫秒）</li>
+<li>-T4 : 设置时间模板，总共有T0-T5，比较适中的是T4</li>
+<li>-v : 打印详细扫描过程</li>
+</ol>
+<p>进行构造，这些参数的函数在<a href="https://github.com/Ullaakut/nmap" target="_blank" rel="noopener">nmap</a>库中已经写好了，直接调用就是，但是这里又个问题待解决：</p>
+<ol>
+<li>如何能够 “灵活” 使用命令参数？</li>
+</ol>
+<p>目前使用的参数函数如下：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">ctx, cancel := context.WithTimeout(context.Background(), time.Duration(Nmaptimeout)*time.Minute)</span><br><span class="line"><span class="keyword">defer</span> cancel()</span><br><span class="line"><span class="comment">// 新建一个扫描类</span></span><br><span class="line">scanner, err := nmap.NewScanner(</span><br><span class="line">	nmap.WithTargets(host),</span><br><span class="line">	nmap.WithPorts(port),</span><br><span class="line">	nmap.WithContext(ctx),</span><br><span class="line">	nmap.WithSYNScan(),</span><br><span class="line">	nmap.WithOpenOnly(),</span><br><span class="line">	nmap.WithSkipHostDiscovery(),</span><br><span class="line">	nmap.WithDisabledDNSResolution(),</span><br><span class="line">)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="结果处理"><a href="#结果处理" class="headerlink" title="结果处理"></a>结果处理</h4><p>在每扫描一个结果后,这里使用<a href="github.com/360EntSecGroup-Skylar/excelize">excelize</a> 来针对数据生成表格处理.创建一个表格：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 生成excel表格等待结果写入</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ExcleCreate</span><span class="params">(filename <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	f := excelize.NewFile()</span><br><span class="line">	f.SetCellValue(<span class="string">"Sheet1"</span>, <span class="string">"A1"</span>, <span class="string">"IP"</span>)</span><br><span class="line">	f.SetCellValue(<span class="string">"Sheet1"</span>, <span class="string">"B1"</span>, <span class="string">"端口"</span>)</span><br><span class="line">	f.SetCellValue(<span class="string">"Sheet1"</span>, <span class="string">"C1"</span>, <span class="string">"状态"</span>)</span><br><span class="line">	f.SetCellValue(<span class="string">"Sheet1"</span>, <span class="string">"D1"</span>, <span class="string">"协议"</span>)</span><br><span class="line">	<span class="comment">//设置宽度</span></span><br><span class="line">	f.SetColWidth(<span class="string">"Sheet1"</span>, <span class="string">"A"</span>, <span class="string">"B"</span>, <span class="number">30</span>)</span><br><span class="line">	f.SetColWidth(<span class="string">"Sheet1"</span>, <span class="string">"C"</span>, <span class="string">"G"</span>, <span class="number">15</span>)</span><br><span class="line">	<span class="keyword">if</span> err := f.SaveAs(filename); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"生成表格错误 ！"</span>)</span><br><span class="line">	&#125;			</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>利用循环，将每次的结果写入数据：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 写入 excle </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">excle360</span><span class="params">(IP <span class="keyword">string</span>, port <span class="keyword">string</span>, xieyi <span class="keyword">string</span>, ipopen <span class="keyword">string</span>, listnumber <span class="keyword">int</span> )</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	f, err1 := excelize.OpenFile(Nmapresultfile)</span><br><span class="line">    <span class="keyword">if</span> err1 != <span class="literal">nil</span> &#123;</span><br><span class="line">    	fmt.Println(<span class="string">"1"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	list1 := fmt.Sprintf(<span class="string">"A%d"</span>, listnumber+<span class="number">2</span>)</span><br><span class="line">	list2 := fmt.Sprintf(<span class="string">"B%d"</span>, listnumber+<span class="number">2</span>)</span><br><span class="line">	list3 := fmt.Sprintf(<span class="string">"C%d"</span>, listnumber+<span class="number">2</span>)</span><br><span class="line">	list4 := fmt.Sprintf(<span class="string">"D%d"</span>, listnumber+<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">	f.SetCellValue(<span class="string">"Sheet1"</span>,list1,IP)</span><br><span class="line">	f.SetCellValue(<span class="string">"Sheet1"</span>,list2,port)</span><br><span class="line">	f.SetCellValue(<span class="string">"Sheet1"</span>,list3,xieyi)</span><br><span class="line">	f.SetCellValue(<span class="string">"Sheet1"</span>,list4,ipopen)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := f.SaveAs(Nmapresultfile); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是这里出现了一个问题，我们呢是按照循环的number来作为根据进行写入数据的，但是这个函数我们是并发的，导致数据会重复覆盖，之类后还是采用txt来进行存储，在nmap扫描完毕后，再转换成excle,解决方案，先存储在一个函数/文件中，再进遍历写入文档:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 用于写入数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">tracefile</span><span class="params">(str_content,name <span class="keyword">string</span>)</span></span>  &#123;</span><br><span class="line"></span><br><span class="line">    fd,_:=os.OpenFile(name,os.O_RDWR|os.O_CREATE|os.O_APPEND,<span class="number">0644</span>)</span><br><span class="line"></span><br><span class="line">    fd_content:=str_content</span><br><span class="line">    buf:=[]<span class="keyword">byte</span>(fd_content)</span><br><span class="line">    fd.Write(buf)</span><br><span class="line">    fd.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="分析nmap数据"><a href="#分析nmap数据" class="headerlink" title="分析nmap数据"></a>分析nmap数据</h4><p>根据服务进行分类</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 用于筛选服务类型</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Checkmodels</span><span class="params">(aliveIpList []Service)</span> <span class="params">(weakpasswordaliveIpList,httpliveIpList,vulnerabillityaliveIpList,otheraliveIpList []Service)</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> _, aliveIpListmodel := <span class="keyword">range</span> aliveIpList &#123;</span><br><span class="line">		<span class="keyword">if</span> aliveIpListmodel.Protocol == <span class="string">"SSH"</span> || aliveIpListmodel.Protocol == <span class="string">"FTP"</span> || aliveIpListmodel.Protocol == <span class="string">"REDIS"</span>&#123;</span><br><span class="line">			weakpasswordaliveIpList = <span class="built_in">append</span>(weakpasswordaliveIpList, aliveIpListmodel)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> aliveIpListmodel.Protocol == <span class="string">"HTTP"</span> &#123;</span><br><span class="line">			httpliveIpList =  <span class="built_in">append</span>(httpliveIpList, aliveIpListmodel)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> aliveIpListmodel.Protocol == <span class="string">"MICROSOFI-DS"</span>&#123;</span><br><span class="line">			vulnerabillityaliveIpList =  <span class="built_in">append</span>(vulnerabillityaliveIpList, aliveIpListmodel)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			otheraliveIpList = <span class="built_in">append</span>(otheraliveIpList, aliveIpListmodel)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> weakpasswordaliveIpList, httpliveIpList, vulnerabillityaliveIpList, otheraliveIpList</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="可插拔式设计"><a href="#可插拔式设计" class="headerlink" title="可插拔式设计"></a>可插拔式设计</h4><p>第一种是学习大佬写的工具<em>x-crack</em>的方式</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ScanFunc <span class="function"><span class="keyword">func</span><span class="params">(service models.Service)</span> <span class="params">(err error, result models.ScanResult)</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	ScanFuncMap <span class="keyword">map</span>[<span class="keyword">string</span>]ScanFunc</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ScanFuncMap = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]ScanFunc)</span><br><span class="line">	ScanFuncMap[<span class="string">"FTP"</span>] = ScanFtp</span><br><span class="line">	ScanFuncMap[<span class="string">"SSH"</span>] = ScanSsh</span><br><span class="line">	ScanFuncMap[<span class="string">"SMB"</span>] = ScanSmb</span><br><span class="line">	ScanFuncMap[<span class="string">"MSSQL"</span>] = ScanMssql</span><br><span class="line">	ScanFuncMap[<span class="string">"MYSQL"</span>] = ScanMysql</span><br><span class="line">	ScanFuncMap[<span class="string">"POSTGRESQL"</span>] = ScanPostgres</span><br><span class="line">	ScanFuncMap[<span class="string">"REDIS"</span>] = ScanRedis</span><br><span class="line">	ScanFuncMap[<span class="string">"ELASTICSEARCH"</span>] = ScanElastic</span><br><span class="line">	ScanFuncMap[<span class="string">"MONGODB"</span>] = ScanMongodb</span><br><span class="line">	ScanFuncMap[<span class="string">"SNMP"</span>] = ScanSNMP</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第二种是使用golang接口，进行可插拔的设计</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> models</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Plugins <span class="keyword">map</span>[<span class="keyword">string</span>]Need</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">/* 设定容器的容量 */</span></span><br><span class="line">    Plugins = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]Need)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设定插在此容器的插件的样子</span></span><br><span class="line"><span class="keyword">type</span> Need <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">/* 它必须告诉容器它是否生病 */</span></span><br><span class="line">    Flag() <span class="keyword">string</span></span><br><span class="line">    <span class="comment">/* 它必须得有启动方法 */</span></span><br><span class="line">    Start(ServiceWeakPassword)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动这个容器中所有的插件</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Start</span><span class="params">(IP ServiceWeakPassword)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> _, plugin := <span class="keyword">range</span> Plugins &#123;</span><br><span class="line">        <span class="comment">/* 查看插件是否是启用状态 */</span></span><br><span class="line">        <span class="comment">// plugin.Flag() 这里的判断可以改成判断运行的模块</span></span><br><span class="line">        <span class="keyword">if</span> IP.Server.Protocol == plugin.Flag() &#123;</span><br><span class="line">            <span class="comment">// 这里之前是go 并发的</span></span><br><span class="line">            plugin.Start(IP)</span><br><span class="line">            <span class="comment">//fmt.Printf("加载 %s\n", name)</span></span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 插件做完之后必须得插入到容器中</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Regist</span><span class="params">(name <span class="keyword">string</span>, plugin Need)</span></span> &#123;</span><br><span class="line">    Plugins[name] = plugin</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="增加插件"><a href="#增加插件" class="headerlink" title="增加插件"></a>增加插件</h4><p>根据设计的可插拔设计，进行插件的增加，插拔接口这里也是分开的，这里用ftp扫描为例子：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> ftpweakpassword</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span>(</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">    <span class="string">"NmapScan/functions"</span></span><br><span class="line">    <span class="string">"NmapScan/plugins"</span></span><br><span class="line">	<span class="string">"github.com/jlaffaye/ftp"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    p_1 := plugin_1&#123;&#125;</span><br><span class="line">    <span class="comment">/* 与容器进行连接 */</span></span><br><span class="line">    plugins.Regist(<span class="string">"ftp弱口令扫描 插件"</span>, p_1)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> plugin_1 <span class="keyword">struct</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 告诉插件我没生病</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this plugin_1)</span> <span class="title">Flag</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"FTP"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 告诉插件我是干啥的</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this plugin_1)</span> <span class="title">Start</span><span class="params">(Informations functions.ServiceWeakPassword)</span></span> &#123;</span><br><span class="line">    <span class="comment">//fmt.Println(IP)</span></span><br><span class="line">    result := <span class="literal">false</span></span><br><span class="line">    conn, err := ftp.DialTimeout(fmt.Sprintf(<span class="string">"%v:%v"</span>, Informations.Server.Ip, Informations.Server.Port), <span class="number">3</span> * time.Second)</span><br><span class="line">    <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">    	err = conn.Login(Informations.Username, Informations.Password)</span><br><span class="line">    	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">    		<span class="keyword">defer</span> conn.Logout()</span><br><span class="line">    		result = <span class="literal">true</span></span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> result &#123; fmt.Println(Informations)&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以此类推，进行插件增加。</p>
+<h3 id="改进-待增加"><a href="#改进-待增加" class="headerlink" title="改进/待增加"></a>改进/待增加</h3><ol>
+<li>增加主机漏洞验证模块</li>
+<li>扫描次数限制优化</li>
+<li>尝试使用一些程序设计的原理</li>
+</ol>
+<h3 id="学习-参考资料"><a href="#学习-参考资料" class="headerlink" title="学习/参考资料"></a>学习/参考资料</h3><ol>
+<li><a href="https://github.com/Ullaakut/nmap" target="_blank" rel="noopener">nmap</a></li>
+<li><a href="https://github.com/netxfly/x-crack" target="_blank" rel="noopener">x-crack</a></li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>ShangZeng</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://www.shangzeng.club/2020/07/16/%E5%9F%BA%E7%A1%80%E6%89%AB%E6%8F%8F%E5%99%A8%E7%BC%96%E5%86%99-NmapScan/">https://www.shangzeng.club/2020/07/16/%E5%9F%BA%E7%A1%80%E6%89%AB%E6%8F%8F%E5%99%A8%E7%BC%96%E5%86%99-NmapScan/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2020 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY<strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Golang/"># Golang</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/07/24/CobaltStrike%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/">CobaltStrike使用笔记</a>
+            
+            
+            <a class="next" rel="next" href="/2020/07/14/Vulnerability-goapp-Go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">Vulnerability-goapp-Go代码审计</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© ShangZeng | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
