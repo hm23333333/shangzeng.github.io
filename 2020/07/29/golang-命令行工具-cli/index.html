@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="ShangZeng">
+
+
+
+
+
+<title>golang-命令行工具-cli | ShangZeng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">ShangZeng&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">ShangZeng&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">golang-命令行工具-cli</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">ShangZeng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 29, 2020&nbsp;&nbsp;15:02:11</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Golang/">Golang</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>学习Golang并尝试应用于实际工作中。</p>
+<h3 id="什么是cli"><a href="#什么是cli" class="headerlink" title="什么是cli"></a>什么是cli</h3><p><a href="https://github.com/urfave/cli" target="_blank" rel="noopener">cli</a>一个简单，快速且有趣的软件包，用于在Go中构建命令行应用程序。目的是使开发人员能够以表达方式编写快速且可分发的命令行应用程序。目前为<em><a href="https://github.com/urfave/cli/blob/master/docs/v1/manual.md" target="_blank" rel="noopener">V1</a>*和</em><a href="https://github.com/urfave/cli/blob/master/docs/v2/manual.md" target="_blank" rel="noopener">V2</a>*，这里学新不学旧。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>在未安装go-mode可以使用go get 进行安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -v github.com/urfave/cli</span><br></pre></td></tr></table></figure>
+
+<p>安装go-mode后在包中引用，会自动安装相关库,demo如下</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"os"</span></span><br><span class="line">  <span class="string">"github.com/urfave/cli/v2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  (&amp;cli.App&#123;&#125;).Run(os.Args)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">NAME:</span><br><span class="line">   ncshell - A new cli application</span><br><span class="line"></span><br><span class="line">USAGE:</span><br><span class="line">   ncshell [global options] command [command options] [arguments...]</span><br><span class="line"></span><br><span class="line">COMMANDS:</span><br><span class="line">   help, h  Shows a list of commands or help for one command</span><br><span class="line"></span><br><span class="line">GLOBAL OPTIONS:</span><br><span class="line">   --help, -h  show help (default: false)</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>cli自带help参数进行构建。在cli库中使用cli.App进行填充命令与参数，使用Run()进行运行</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"fmt"</span></span><br><span class="line">  <span class="string">"log"</span></span><br><span class="line">  <span class="string">"os"</span></span><br><span class="line"></span><br><span class="line">  <span class="string">"github.com/urfave/cli/v2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  app := &amp;cli.App&#123;</span><br><span class="line">    Name:  <span class="string">"hello"</span>,</span><br><span class="line">    Usage: <span class="string">"hello world example"</span>,</span><br><span class="line">    Action: <span class="function"><span class="keyword">func</span><span class="params">(c *cli.Context)</span> <span class="title">error</span></span> &#123; <span class="comment">// 执行命令</span></span><br><span class="line">      fmt.Println(<span class="string">"hello world"</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">  err := app.Run(os.Args)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>另一种，使用实例化进行屌用：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"fmt"</span></span><br><span class="line">  <span class="string">"log"</span></span><br><span class="line">  <span class="string">"os"</span></span><br><span class="line">  <span class="string">"runtime"</span>     <span class="comment">// 用于记录系统调度之类的</span></span><br><span class="line">  <span class="string">"github.com/urfave/cli/v2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">  runtime.GOMAXPROCS(runtime.NumCPU()) <span class="comment">// 使用所有CPU运行，现在是默认开启了</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  app := cli.NewApp() <span class="comment">// 实例化</span></span><br><span class="line">  app.Name = <span class="string">"x-crack"</span></span><br><span class="line">  app.Action = <span class="function"><span class="keyword">func</span><span class="params">(c *cli.Context)</span> <span class="title">error</span></span> &#123;  <span class="comment">// 执行命令</span></span><br><span class="line">      fmt.Println(<span class="string">"hello world"</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    err := app.Run(os.Args)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      log.Fatal(err)</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在目标<em>Action</em>中，通过cli.Context的相关方法我们可以获取传给命令行的参数信息：</p>
+<ol>
+<li>NArg()          返回参数个数</li>
+<li>Args()          返回cli.Args对象，调用其Get(i)获取位置i上的参数。</li>
+<li>IsSet(“xxxx”)   查询是否设置xxxxx选项（调用需要string进行转换）</li>
+</ol>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  app := &amp;cli.App&#123;</span><br><span class="line">    Name:  <span class="string">"arguments"</span>,</span><br><span class="line">    Usage: <span class="string">"arguments example"</span>,</span><br><span class="line">    Action: <span class="function"><span class="keyword">func</span><span class="params">(c *cli.Context)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">      <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; c.NArg(); i++ &#123;</span><br><span class="line">        fmt.Printf(<span class="string">"%d: %s\n"</span>, i+<span class="number">1</span>, c.Args().Get(i)) <span class="comment">// 获取参数的位置，获取的参数</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> c.IsSet(<span class="string">"debug"</span>) &#123;</span><br><span class="line">      	fmt.Println(<span class="string">"1111"</span>)</span><br><span class="line">      &#125; </span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  err := app.Run(os.Args)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>增加选项 Flags：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"fmt"</span></span><br><span class="line">  <span class="string">"log"</span></span><br><span class="line">  <span class="string">"os"</span></span><br><span class="line"></span><br><span class="line">  <span class="string">"github.com/urfave/cli/v2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  app := &amp;cli.App&#123;</span><br><span class="line">    Flags: []cli.Flag &#123;  <span class="comment">// 增减参数</span></span><br><span class="line">      &amp;cli.StringFlag&#123;</span><br><span class="line">        Name: <span class="string">"lang"</span>,</span><br><span class="line">        Value: <span class="string">"english"</span>,</span><br><span class="line">        Usage: <span class="string">"language for the greeting"</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    Action: <span class="function"><span class="keyword">func</span><span class="params">(c *cli.Context)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">      name := <span class="string">"Nefertiti"</span>  <span class="comment">// 设置mane参数</span></span><br><span class="line">      <span class="keyword">if</span> c.NArg() &gt; <span class="number">0</span> &#123;    <span class="comment">// 这里是按照无命令参数计算的，比如 --lang xxx 并不会计算在其中</span></span><br><span class="line">        name = c.Args().Get(<span class="number">0</span>)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> c.String(<span class="string">"lang"</span>) == <span class="string">"spanish"</span> &#123;   <span class="comment">// --lang spanish 对参数内容进行限制</span></span><br><span class="line">        fmt.Println(<span class="string">"Hola"</span>, name)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"Hello"</span>, name)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  err := app.Run(os.Args)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当参数比较多的时候，我们拿出来单独进行使用：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">	...</span><br><span class="line">	Flags: []cli.Flag&#123;</span><br><span class="line">		boolFlag(<span class="string">"debug, d"</span>, <span class="string">"debug mode"</span>),</span><br><span class="line">		intFlag(<span class="string">"timeout, t"</span>, <span class="number">5</span>, <span class="string">"timeout"</span>),</span><br><span class="line">		intFlag(<span class="string">"scan_num, n"</span>, <span class="number">5000</span>, <span class="string">"thread num"</span>),</span><br><span class="line">		stringFlag(<span class="string">"ip_list, i"</span>, <span class="string">"iplist.txt"</span>, <span class="string">"iplist"</span>),</span><br><span class="line">		stringFlag(<span class="string">"user_dict, u"</span>, <span class="string">"user.dic"</span>, <span class="string">"user dict"</span>),</span><br><span class="line">		stringFlag(<span class="string">"pass_dict, p"</span>, <span class="string">"pass.dic"</span>, <span class="string">"password dict"</span>),</span><br><span class="line">		stringFlag(<span class="string">"outfile, o"</span>, <span class="string">"x_crack.txt"</span>, <span class="string">"scan result file"</span>),</span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stringFlag</span><span class="params">(name, value, usage <span class="keyword">string</span>)</span> <span class="title">cli</span>.<span class="title">StringFlag</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> cli.StringFlag&#123;</span><br><span class="line">		Name:  name,  <span class="comment">// 参数名字</span></span><br><span class="line">		Value: value, <span class="comment">// 参数值（默认值）</span></span><br><span class="line">		Aliases: []<span class="keyword">string</span>&#123;<span class="string">"c"</span>&#125;,  <span class="comment">//简称</span></span><br><span class="line">		Usage: usage, <span class="comment">// 参数介绍</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">boolFlag</span><span class="params">(name, usage <span class="keyword">string</span>)</span> <span class="title">cli</span>.<span class="title">BoolFlag</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> cli.BoolFlag&#123;</span><br><span class="line">		Name:  name,</span><br><span class="line">		Usage: usage,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">intFlag</span><span class="params">(name <span class="keyword">string</span>, value <span class="keyword">int</span>, usage <span class="keyword">string</span>)</span> <span class="title">cli</span>.<span class="title">IntFlag</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> cli.IntFlag&#123;</span><br><span class="line">		Name:  name,</span><br><span class="line">		Value: value,</span><br><span class="line">		Usage: usage,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官方写的,更过flag参数的使用说明可以查看官方的<a href="https://pkg.go.dev/github.com/urfave/cli/v2?tab=doc" target="_blank" rel="noopener">文档</a>：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"log"</span></span><br><span class="line">  <span class="string">"os"</span></span><br><span class="line">  <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">  <span class="string">"github.com/urfave/cli/v2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">var</span> language <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">  app := &amp;cli.App&#123;</span><br><span class="line">    Flags: []cli.Flag &#123;</span><br><span class="line">      &amp;cli.StringFlag&#123;</span><br><span class="line">        Name:        <span class="string">"lang"</span>,</span><br><span class="line">        Value:       <span class="string">"english"</span>,</span><br><span class="line">        Usage:       <span class="string">"language for the greeting"</span>,</span><br><span class="line">        Destination: &amp;language,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    Action: <span class="function"><span class="keyword">func</span><span class="params">(c *cli.Context)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">      name := <span class="string">"someone"</span></span><br><span class="line">      <span class="keyword">if</span> c.NArg() &gt; <span class="number">0</span> &#123;</span><br><span class="line">        name = c.Args().Get(<span class="number">0</span>)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> language == <span class="string">"spanish"</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"Hola"</span>, name)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"Hello"</span>, name)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  err := app.Run(os.Args)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用command来进行命令与子命令的调用：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"log"</span></span><br><span class="line">  <span class="string">"os"</span></span><br><span class="line"></span><br><span class="line">  <span class="string">"github.com/urfave/cli/v2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  app := &amp;cli.App&#123;</span><br><span class="line">    Commands: []*cli.Command&#123;</span><br><span class="line">      &#123;</span><br><span class="line">        Name: <span class="string">"noop"</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        Name:     <span class="string">"add"</span>,</span><br><span class="line">        Category: <span class="string">"template"</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        Name:     <span class="string">"remove"</span>,</span><br><span class="line">        Category: <span class="string">"template"</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  err := app.Run(os.Args)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>退出程序运行（在app.Run()中运行后，使用os是无法进行退出的）：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"log"</span></span><br><span class="line">  <span class="string">"os"</span></span><br><span class="line"></span><br><span class="line">  <span class="string">"github.com/urfave/cli/v2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  app := &amp;cli.App&#123;</span><br><span class="line">    Flags: []cli.Flag&#123;</span><br><span class="line">      &amp;cli.BoolFlag&#123;</span><br><span class="line">        Name:  <span class="string">"ginger-crouton"</span>,</span><br><span class="line">        Usage: <span class="string">"is it in the soup?"</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    Action: <span class="function"><span class="keyword">func</span><span class="params">(ctx *cli.Context)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">      <span class="keyword">if</span> !ctx.Bool(<span class="string">"ginger-crouton"</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> cli.Exit(<span class="string">"Ginger croutons are not in the soup"</span>, <span class="number">86</span>)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  err := app.Run(os.Args)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+<h3 id="学习-参考"><a href="#学习-参考" class="headerlink" title="学习/参考"></a>学习/参考</h3><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>ShangZeng</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://www.shangzeng.club/2020/07/29/golang-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7-cli/">https://www.shangzeng.club/2020/07/29/golang-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7-cli/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2020 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY<strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Golang/"># Golang</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/07/30/ATT/">ATT</a>
+            
+            
+            <a class="next" rel="next" href="/2020/07/24/CobaltStrike%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/">CobaltStrike使用笔记</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© ShangZeng | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

