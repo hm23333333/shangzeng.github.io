@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="ShangZeng">
+
+
+
+
+
+<title>HFish初版审计学习 | ShangZeng</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">ShangZeng&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">ShangZeng&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/friends">Friends</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">HFish初版审计学习</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">ShangZeng</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">June 21, 2021&nbsp;&nbsp;11:28:07</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Golang/">Golang</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>首发 <code>SecIN</code> 这里做个记录：</p>
+<p><a href="https://sec-in.com/article/949" target="_blank" rel="noopener">https://sec-in.com/article/949</a></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在之前学习golang的靶场之后，下来开始尝试一些真实环境的代码审计工作，于是我找到了HFsih并下载了最初的版本。</p>
+<p>到这里可能有师傅问了：为什么不直接梭哈最新版本？当然是因为最初版本比较简单并且适合新人（并不是担心高版本找不到问题会很尴尬），哈哈</p>
+<p>话不多说，我们开干</p>
+<h3 id="下载-安装"><a href="#下载-安装" class="headerlink" title="下载/安装"></a>下载/安装</h3><p>Hfish是使用golang编写的一款开源蜜罐，其中下载地址如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;hacklcx&#x2F;HFish&#x2F;releases?after&#x3D;0.4</span><br></pre></td></tr></table></figure>
+<p>在安装golang环境后，我们还需要安装gin框架</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com&#x2F;gin-gonic&#x2F;gin</span><br></pre></td></tr></table></figure>
+<p>设置go mode</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">go env -w GOBIN&#x3D;$HOME&#x2F;bin</span><br><span class="line">go env -w GO111MODULE&#x3D;on</span><br><span class="line">go env -w GOPROXY&#x3D;https:&#x2F;&#x2F;goproxy.cn,direct</span><br></pre></td></tr></table></figure>
+<p>接下来进入目录就可以运行了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run main.go run</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码审计-学习"><a href="#代码审计-学习" class="headerlink" title="代码审计/学习"></a>代码审计/学习</h3><p>首先看入口 <code>main.go</code> 中 <code>setting.Run()</code> 为运行入口，进入进入<code>HFish/utils/setting/setting.go</code>, 我们可以看到使用<code>conf.Get(&quot;xxx&quot;, &quot;xxx&quot;)</code>的方式进行读取<code>config.ini</code>中的配置文件，以此判断蜜罐是否启动，如果开启使用<code>Start（）</code>进行运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 启动 Redis 钓鱼</span><br><span class="line">redisStatus :&#x3D; conf.Get(&quot;redis&quot;, &quot;status&quot;)</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 判断 Redis 钓鱼 是否开启</span><br><span class="line">if redisStatus &#x3D;&#x3D; &quot;1&quot; &#123;</span><br><span class="line">	redisAddr :&#x3D; conf.Get(&quot;redis&quot;, &quot;addr&quot;)</span><br><span class="line">	go redis.Start(redisAddr)</span><br></pre></td></tr></table></figure>
+
+<p>这里后面再来看蜜罐，先来看看管理端是是怎么设置的，读取<code>config.txt</code> 中设置的管理员地址，并在 <code>http.Server</code>中进行设置，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">	&#x2F;&#x2F; 启动 admin 管理后台</span><br><span class="line">	adminbAddr :&#x3D; conf.Get(&quot;admin&quot;, &quot;addr&quot;)</span><br><span class="line">	serverAdmin :&#x3D; &amp;http.Server&#123;</span><br><span class="line">		Addr:         adminbAddr,</span><br><span class="line">		Handler:      RunAdmin(),</span><br><span class="line">		ReadTimeout:  5 * time.Second,</span><br><span class="line">		WriteTimeout: 10 * time.Second,</span><br><span class="line">	&#125;</span><br><span class="line">	serverAdmin.ListenAndServe()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看<code>RunAdmin()</code> 中设置的路由，这里使用的gin框架，生成日志并写入静态资源</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">func RunAdmin() http.Handler &#123;</span><br><span class="line">	gin.DisableConsoleColor()</span><br><span class="line">	f, _ :&#x3D; os.Create(&quot;.&#x2F;logs&#x2F;hfish.log&quot;)</span><br><span class="line">	gin.DefaultWriter &#x3D; io.MultiWriter(f)</span><br><span class="line">	&#x2F;&#x2F; 引入gin</span><br><span class="line">	r :&#x3D; gin.Default()</span><br><span class="line"></span><br><span class="line">	r.Use(gin.Recovery())</span><br><span class="line">	&#x2F;&#x2F; 引入html资源</span><br><span class="line">	r.LoadHTMLGlob(&quot;admin&#x2F;*&quot;)</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; 引入静态资源</span><br><span class="line">	r.Static(&quot;&#x2F;static&quot;, &quot;.&#x2F;static&quot;)</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; 加载路由</span><br><span class="line">	view.LoadUrl(r)</span><br><span class="line"></span><br><span class="line">	return r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进<code>view.LoadUrl(r)</code>，查看加载的路由功能 ,进入<code>HFish/view/url.go</code>，访问<code>http://127.0.0.1/login</code> 黑白结合进行查看，首先是登陆页面：直接夹在静态资源:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func Html(c *gin.Context) &#123;</span><br><span class="line">	data :&#x3D; getSetting() &#x2F;&#x2F;订阅通知等</span><br><span class="line">	c.HTML(http.StatusOK, &quot;setting.html&quot;, gin.H&#123;</span><br><span class="line">		&quot;dataList&quot;: data,</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>尝试登陆，这里是直接post提交 <code>loginName</code>和 <code>loginPwd</code> 为账号密码，我们在<code>HFish/view/login/view.go</code>中查看登陆逻辑 — 获取用户的登陆账号和密码，与<code>config.ini</code>重的账号密码进行比对，如果一直就在cookie中写入登陆的用户名:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">func Login(c *gin.Context) &#123;</span><br><span class="line">	loginName :&#x3D; c.PostForm(&quot;loginName&quot;)</span><br><span class="line">	loginPwd :&#x3D; c.PostForm(&quot;loginPwd&quot;)</span><br><span class="line"></span><br><span class="line">	account :&#x3D; conf.Get(&quot;admin&quot;, &quot;account&quot;)</span><br><span class="line">	password :&#x3D; conf.Get(&quot;admin&quot;, &quot;password&quot;)</span><br><span class="line"></span><br><span class="line">	if loginName &#x3D;&#x3D; account &#123;</span><br><span class="line">		if loginPwd &#x3D;&#x3D; password &#123;</span><br><span class="line">			c.SetCookie(&quot;is_login&quot;, loginName, 60*60*24, &quot;&#x2F;&quot;, &quot;*&quot;, false, true)</span><br><span class="line">			c.JSON(http.StatusOK, error.ErrSuccessNull())</span><br><span class="line">			return</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	c.JSON(http.StatusOK, error.ErrLoginFail())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="无验证码-容易爆破"><a href="#无验证码-容易爆破" class="headerlink" title="无验证码-容易爆破"></a>无验证码-容易爆破</h4><p>其实这也不算是什么问题，但是这玩意万一有用呢？抱着这种想法，我写了脚本，结果居然大约爆破出来二十多个公网的蜜罐管理员账号密码，脚本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;shangzeng&#x2F;GolangTools&#x2F;tree&#x2F;master&#x2F;12.HFishPassScan</span><br></pre></td></tr></table></figure>
+
+<p>跑题了，继续看代码 ==</p>
+<h4 id="绕过密码登陆管理员"><a href="#绕过密码登陆管理员" class="headerlink" title="绕过密码登陆管理员"></a>绕过密码登陆管理员</h4><p>继续查看学习管理员的路由设置，发现在登出操作中，就是清除cookie中的is_login 的用户名，从而达到目的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func Logout(c *gin.Context) &#123;</span><br><span class="line">	c.SetCookie(&quot;is_login&quot;, &quot;&quot;, -1, &quot;&#x2F;&quot;, &quot;*&quot;, false, true)</span><br><span class="line">	c.Redirect(http.StatusFound, &quot;&#x2F;login&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而FHish怎么判断用户是否登陆的呢，这里使用<code>login.Jump</code>函数进行判断，<code>HFish/view/login/view.go</code> 的jump函数进行查看，这里出现了问题： 只是判断了cookie中的用户名为管理员用户名，就判断用户是已经登陆的状态，进入了管理员界面，根本没有用到密码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">func Jump(c *gin.Context) &#123;</span><br><span class="line">	account :&#x3D; conf.Get(&quot;admin&quot;, &quot;account&quot;)</span><br><span class="line">	loginCookie, _ :&#x3D; c.Cookie(&quot;is_login&quot;)</span><br><span class="line">	if account !&#x3D; loginCookie &#123;</span><br><span class="line">		c.Redirect(http.StatusFound, &quot;&#x2F;login&quot;)</span><br><span class="line">		c.Abort()</span><br><span class="line">		return</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		c.Next()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么问题来了：如果我们知道管理员账号（一般都是admin），那么我们只要修改cookie中的内容，就可以进行登陆了。测试一下：当不存在的时候，登陆mail界面会跳转到登陆页面</p>
+<p><img src="https://sec-in.com/img/sin/M00/00/62/wKg0C2BLDgOAPP-IAAAlTBWatwM856.png" alt="抓包"></p>
+<p>但是<code>is_login=admin</code>时，就可以通过login.Jump函数验证，访问管理员界面</p>
+<p><img src="https://sec-in.com/img/sin/M00/00/62/wKg0C2BLDhKAOrcNAAAvdIxCAL0420.png" alt="修改cookie"></p>
+<p>也就是说：只要我们知道了管理员账号名，我们可以越过密码进行登录（划重点）。</p>
+<h4 id="前台存储XSS"><a href="#前台存储XSS" class="headerlink" title="前台存储XSS"></a>前台存储XSS</h4><p>继续查看，仪表盘功能和上钩列表功能主要是展示，没有什么输入操作，接下来查看邮件群发功能：接收邮件，并且在send.SendMail 中使用golang的gomail（<a href="https://gopkg.in/gomail.v2）进行发送邮件，使用的是sqlite数据库，但是这里只是用来一个查询并不可控。" target="_blank" rel="noopener">https://gopkg.in/gomail.v2）进行发送邮件，使用的是sqlite数据库，但是这里只是用来一个查询并不可控。</a></p>
+<p><img src="https://sec-in.com/img/sin/M00/00/62/wKg0C2BLDkeABFNwAABLxhvHZZQ713.png" alt></p>
+<p>接着查看配置功能,其中view.go中的GetSettingInfo 接收了ID参数用于查询邮件配置,但是这里使用占位符，不存在注入问题，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*发送邮件*&#x2F;</span><br><span class="line">func SendEmailToUsers(c *gin.Context) &#123;</span><br><span class="line">	emails :&#x3D; c.PostForm(&quot;emails&quot;)</span><br><span class="line">	title :&#x3D; c.PostForm(&quot;title&quot;)</span><br><span class="line">	from :&#x3D; c.PostForm(&quot;from&quot;)</span><br><span class="line">	content :&#x3D; c.PostForm(&quot;content&quot;)</span><br><span class="line"></span><br><span class="line">	eArr :&#x3D; strings.Split(emails, &quot;,&quot;)</span><br><span class="line">	sql :&#x3D; &#96;select status,info from hfish_setting where type &#x3D; &quot;mail&quot;&#96;</span><br><span class="line">	isAlertStatus :&#x3D; dbUtil.Query(sql)</span><br><span class="line">	info :&#x3D; isAlertStatus[0][&quot;info&quot;]</span><br><span class="line">	config :&#x3D; strings.Split(info.(string), &quot;&amp;&amp;&quot;)</span><br><span class="line"></span><br><span class="line">	if from !&#x3D; &quot;&quot; &#123;</span><br><span class="line">		config[2] &#x3D; from</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	send.SendMail(eArr, title, content, config)</span><br><span class="line">	c.JSON(http.StatusOK, error.ErrSuccessNull())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来就是看API接口，主要的目的就是上报we蜜罐的信息,默认开启（这个重要）,我们可以看到上报的信息直接写入了sqlite数据库中，虽然用占位符不存在注入问题了，但是是是否会存在XSS呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 获取钓鱼信息</span><br><span class="line">func GetFishInfo(c *gin.Context) &#123;</span><br><span class="line">	id, _ :&#x3D; c.GetQuery(&quot;id&quot;)</span><br><span class="line">	sql :&#x3D; &#96;select info from hfish_info where id&#x3D;?;&#96;</span><br><span class="line">	result :&#x3D; dbUtil.Query(sql, id)</span><br><span class="line">	c.JSON(http.StatusOK, error.ErrSuccess(result))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们看看蜜罐是怎么上传数据的 HFish/web/github/static/github.js 文件，sec_key直接写在js里面的可控:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">function report() &#123;</span><br><span class="line">    var login_field &#x3D; $(&quot;#login_field&quot;).val();</span><br><span class="line">    var password &#x3D; $(&quot;#password&quot;).val();</span><br><span class="line"></span><br><span class="line">    $.ajax(&#123;</span><br><span class="line">        type: &quot;POST&quot;,</span><br><span class="line">        url: &quot;http:&#x2F;&#x2F;localhost:9001&#x2F;api&#x2F;v1&#x2F;post&#x2F;report&quot;,</span><br><span class="line">        dataType: &quot;json&quot;,</span><br><span class="line">        data: &#123;</span><br><span class="line">            &quot;name&quot;: &quot;Github钓鱼&quot;,</span><br><span class="line">            &quot;info&quot;: login_field + &quot;&amp;&amp;&quot; + password,</span><br><span class="line">            &quot;sec_key&quot;: &quot;9cbf8a4dcb8e30682b927f352d6559a0&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        success: function (e) &#123;</span><br><span class="line">            if (e.code &#x3D;&#x3D; &quot;200&quot;) &#123;</span><br><span class="line">                window.location.href &#x3D; &quot;https:&#x2F;&#x2F;github.com&quot;;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                console.log(e.msg)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        error: function (e) &#123;</span><br><span class="line">            console.log(&quot;fail&quot;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看fish. GetFishList而管理员界面也是直接读取数据，没有编码,很有可能存在XSS,使用钓鱼接口发送XSS测试</p>
+<p><img src="https://sec-in.com/img/sin/M00/00/62/wKg0C2BLDwuAPuGsAABNvVZvIIw979.png" alt="XSS测试"></p>
+<p>查看管理员界面，触发XSS <code>http://127.0.0.1/fish</code></p>
+<p><img src="https://sec-in.com/img/sin/M00/00/62/wKg0C2BLDxuAddAtAAATlEEZEhk725.png" alt></p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ul>
+<li><p>到这里管理员的功能就看完了，接下来就是查看蜜罐的设计了，首先就是web钓鱼采用和管理员一样都是gin框架，只不过是在登录后执行github.js上文的内容，将数据传送到接口</p>
+</li>
+<li><p>Mysql和Redis连接使用nnet.Listen监听端口，接收信息分别使用report.ReportUpdateMysql和report.ReportRedis 来向数据库写入数据(很麻烦先不写了==)。</p>
+</li>
+<li><p>接下来看ssh蜜罐的设置 主要使用github.com/gliderlabs/ssh这个库进行二次开发做成蜜罐 （教程 <a href="https://pkg.go.dev/github.com/gliderlabs/ssh），最后后去的数据用report.ReportSSH写入sqlite数据库" target="_blank" rel="noopener">https://pkg.go.dev/github.com/gliderlabs/ssh），最后后去的数据用report.ReportSSH写入sqlite数据库</a></p>
+</li>
+</ul>
+<p>到这里代码就大致分析完毕了，还是有一些收获的哈哈（虽然是没人说的Nday）接下如果有时间可以继续学习蜜罐的编写或者查看下一个版本的HFih进行学习。最后感谢观看哈～</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>ShangZeng</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://www.shangzeng.club/2021/06/21/HFish%E5%88%9D%E7%89%88%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/">https://www.shangzeng.club/2021/06/21/HFish%E5%88%9D%E7%89%88%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2020 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY<strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Golang/"># Golang</a>
+                    
+                        <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"># 代码审计</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/12/14/JavaSecCode%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">JavaSecCode学习笔记</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© ShangZeng | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
